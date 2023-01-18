@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ecore:EPackage xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:ComIbmCompute.msgnode="ComIbmCompute.msgnode" xmlns:ComIbmDatabaseRetrieve.msgnode="ComIbmDatabaseRetrieve.msgnode" xmlns:ComIbmLabel.msgnode="ComIbmLabel.msgnode" xmlns:ComIbmRoute.msgnode="ComIbmRoute.msgnode" xmlns:ComIbmRouteToLabel.msgnode="ComIbmRouteToLabel.msgnode" xmlns:ComIbmThrow.msgnode="ComIbmThrow.msgnode" xmlns:ComIbmTrace.msgnode="ComIbmTrace.msgnode" xmlns:ecore="http://www.eclipse.org/emf/2002/Ecore" xmlns:eflow="http://www.ibm.com/wbi/2005/eflow"
+    xmlns:gen_System1Client.subflow="gen/System1Client.subflow" xmlns:gen_System2Client.subflow="gen/System2Client.subflow" xmlns:gen_System3Client.subflow="gen/System3Client.subflow" xmlns:gen_System4Client.subflow="gen/System4Client.subflow" xmlns:gen_System5Client.subflow="gen/System5Client.subflow" xmlns:gen_edMiscinfoChecking.subflow="gen/edMiscinfoChecking.subflow" xmlns:utility="http://www.ibm.com/wbi/2005/eflow_utility" nsURI="ed/postSendMessageInReplyTo.subflow" nsPrefix="ed_postSendMessageInReplyTo.subflow">
+  <eClassifiers xmi:type="eflow:FCMComposite" name="FCMComposite_1">
+    <eSuperTypes href="http://www.ibm.com/wbi/2005/eflow#//FCMBlock"/>
+    <translation xmi:type="utility:TranslatableString" key="postSendMessageInReplyTo" bundleName="ed/postSendMessageInReplyTo" pluginId="DAEU_eDelivery"/>
+    <colorGraphic16 xmi:type="utility:GIFFileGraphic" resourceName="platform:/plugin/DAEU_eDelivery/icons/full/obj16/postSendMessageInReplyTo.gif"/>
+    <colorGraphic32 xmi:type="utility:GIFFileGraphic" resourceName="platform:/plugin/DAEU_eDelivery/icons/full/obj30/postSendMessageInReplyTo.gif"/>
+    <composition>
+      <nodes xmi:type="ComIbmTrace.msgnode:FCMComposite_1" xmi:id="FCMComposite_1_2" location="869,20" destination="file" filePath="C:/ProgramData/IBM/MQSI/components/LOCAL_INODE" pattern="============================== S T A R T   O F   T R A C E =============================&#xD;&#xA;                  Time:     ${CURRENT_TIMESTAMP}&#xD;&#xA;   IntegrationNodeName:     ${BrokerName}  &#xD;&#xA;      QueueManagerName:     ${QueueManagerName}&#xD;&#xA;IntegrationNodeVersion:     ${BrokerVersion}  &#xD;&#xA;              Platform:     ${Family}&#xD;&#xA;             ProcessID:     ${ProcessId} &#xD;&#xA; IntegrationNodeUserId:     ${BrokerUserId}&#xD;&#xA;IntegrationServerLabel:     ${ExecutionGroupLabel}&#xD;&#xA;      ApplicationLabel:     ${ApplicationLabel}&#xD;&#xA;      MessageFlowLabel:     ${MessageFlowLabel}&#xD;&#xA;             NodeLabel:     ${NodeLabel}&#xD;&#xA;==============================     E X C E P T I O N S     =============================&#xD;&#xA;${ExceptionList}     &#xD;&#xA;========================   L O C A L    E N V I R O N M E N T   ========================&#xD;&#xA;${LocalEnvironment}      &#xD;&#xA;==============================    E N V I R O N M E N T    =============================&#xD;&#xA;${Environment}    &#xD;&#xA;==============================          R O O T         ================================&#xD;&#xA;${Root}&#xD;&#xA;==============================   E N D   O F   T R A C E   =============================">
+        <translation xmi:type="utility:ConstantString" string="Trace"/>
+      </nodes>
+      <nodes xmi:type="eflow:FCMSink" xmi:id="OutTerminal.Output_1" location="1046,230">
+        <translation xmi:type="utility:TranslatableString" key="Output1" bundleName="ed/postSendMessageInReplyTo" pluginId="DAEU_eDelivery"/>
+      </nodes>
+      <nodes xmi:type="ComIbmCompute.msgnode:FCMComposite_1" xmi:id="FCMComposite_1_6" location="170,39" computeExpression="esql://routine/ed#SendMessageInReplyTo_Request.Main" computeMode="destinationAndMessage">
+        <translation xmi:type="utility:ConstantString" string="SendMessageInReplyToRequest"/>
+      </nodes>
+      <nodes xmi:type="ComIbmCompute.msgnode:FCMComposite_1" xmi:id="FCMComposite_1_8" location="821,183" computeExpression="esql://routine/ed#SendMessageInReplyTo_Response.Main" computeMode="destinationAndMessage">
+        <translation xmi:type="utility:ConstantString" string="SendMessageInReplyToResponse"/>
+      </nodes>
+      <nodes xmi:type="eflow:FCMSource" xmi:id="InTerminal.Input_1" location="17,40">
+        <translation xmi:type="utility:TranslatableString" key="Input1" bundleName="ed/postSendMessageInReplyTo" pluginId="DAEU_eDelivery"/>
+      </nodes>
+      <nodes xmi:type="ComIbmCompute.msgnode:FCMComposite_1" xmi:id="FCMComposite_1_9" location="869,310" computeExpression="esql://routine/gen#EDelivery_SOAPFault.Main" computeMode="destinationAndMessage">
+        <translation xmi:type="utility:ConstantString" string="eDeliverySOAPFault"/>
+      </nodes>
+      <nodes xmi:type="ComIbmThrow.msgnode:FCMComposite_1" xmi:id="FCMComposite_1_10" location="1047,20">
+        <translation xmi:type="utility:ConstantString" string="Throw"/>
+      </nodes>
+      <nodes xmi:type="ComIbmDatabaseRetrieve.msgnode:FCMComposite_1" xmi:id="FCMComposite_1_11" location="352,39" dataSourceName="{DB2Config_DAEUTest}:DB2_LINUX" copyMessage="true" sqlQuery="SELECT CONFIG.ACTOR_TYPE.EDELIVERY&#xA;FROM CONFIG.ACTOR_TYPE&#xA;WHERE CONFIG.ACTOR_TYPE.ID = ?&#xA;ORDER BY CONFIG.ACTOR_TYPE.EDELIVERY ASC" tableNameComboValues="0,0,0~CONFIG.ACTOR_TYPE" columnNameComboValues="1,0,0~EDELIVERY,ID" operatorComboValues="2,0,0~=" valueTypeComboValues="2,0,0,0~Element" columnValueComboValues="0,0,0~CONFIG.ACTOR_TYPE.EDELIVERY">
+        <translation xmi:type="utility:ConstantString" string="senderType Retrieve"/>
+        <queryElements tableName="CONFIG.ACTOR_TYPE" columnName="ID" operator="=" valueType="Element" value="$InputLocalEnvironment/Variables/SenderType"/>
+        <queryElements tableName="CONFIG.ACTOR_TYPE" columnName="EDELIVERY" operator="ASC" valueType="None" value="None"/>
+        <dataElements columnName="CONFIG.ACTOR_TYPE.EDELIVERY" messageElement="$OutputLocalEnvironment/Variables/receiverType"/>
+      </nodes>
+      <nodes xmi:type="ComIbmRoute.msgnode:FCMComposite_1" xmi:id="FCMComposite_1_15" location="549,210">
+        <outTerminals terminalNodeID="Match" dynamic="true" label="Match"/>
+        <translation xmi:type="utility:ConstantString" string="Route"/>
+        <filterTable filterPattern="boolean($Root/SOAP/Body/ns:SendMessageInReplyToResponse/ns:SendMessageInReplyToResult)" routingOutputTerminal="Match"/>
+        <nsMappingTable nsPrefix="ns" namespace="https://edelivery.egov.bg/services/integration"/>
+        <nsMappingTable nsPrefix="ns2" namespace="http://schemas.datacontract.org/2004/07/EDelivery.Common.DataContracts.ESubject"/>
+        <nsMappingTable nsPrefix="tns" namespace="http://schemas.xmlsoap.org/soap/envelope/"/>
+      </nodes>
+      <nodes xmi:type="gen_System3Client.subflow:FCMComposite_1" xmi:id="FCMComposite_1_1" location="227,475">
+        <translation xmi:type="utility:ConstantString" string="System3Client"/>
+      </nodes>
+      <nodes xmi:type="ComIbmLabel.msgnode:FCMComposite_1" xmi:id="FCMComposite_1_3" location="42,593" labelName="SYSTEM4-SendMessageInReplyTo">
+        <translation xmi:type="utility:ConstantString" string="SYSTEM4"/>
+      </nodes>
+      <nodes xmi:type="ComIbmLabel.msgnode:FCMComposite_1" xmi:id="FCMComposite_1_5" location="31,276" labelName="SYSTEM1-SendMessageInReplyTo">
+        <translation xmi:type="utility:ConstantString" string="SYSTEM1"/>
+      </nodes>
+      <nodes xmi:type="gen_System1Client.subflow:FCMComposite_1" xmi:id="FCMComposite_1_7" location="211,271">
+        <translation xmi:type="utility:ConstantString" string="System1Client"/>
+      </nodes>
+      <nodes xmi:type="ComIbmLabel.msgnode:FCMComposite_1" xmi:id="FCMComposite_1_13" location="43,669" labelName="SYSTEM5-SendMessageInReplyTo">
+        <translation xmi:type="utility:ConstantString" string="SYSTEM5"/>
+      </nodes>
+      <nodes xmi:type="ComIbmLabel.msgnode:FCMComposite_1" xmi:id="FCMComposite_1_14" location="38,482" labelName="SYSTEM3-SendMessageInReplyTo">
+        <translation xmi:type="utility:ConstantString" string="SYSTEM3"/>
+      </nodes>
+      <nodes xmi:type="ComIbmLabel.msgnode:FCMComposite_1" xmi:id="FCMComposite_1_16" location="35,387" labelName="SYSTEM2-SendMessageInReplyTo">
+        <translation xmi:type="utility:ConstantString" string="SYSTEM2"/>
+      </nodes>
+      <nodes xmi:type="gen_System4Client.subflow:FCMComposite_1" xmi:id="FCMComposite_1_17" location="230,587">
+        <translation xmi:type="utility:ConstantString" string="System4Client"/>
+      </nodes>
+      <nodes xmi:type="gen_System2Client.subflow:FCMComposite_1" xmi:id="FCMComposite_1_18" location="217,386">
+        <translation xmi:type="utility:ConstantString" string="System2Client"/>
+      </nodes>
+      <nodes xmi:type="gen_System5Client.subflow:FCMComposite_1" xmi:id="FCMComposite_1_19" location="232,661">
+        <translation xmi:type="utility:ConstantString" string="System5Client"/>
+      </nodes>
+      <nodes xmi:type="ComIbmRouteToLabel.msgnode:FCMComposite_1" xmi:id="FCMComposite_1_20" location="500,70">
+        <translation xmi:type="utility:ConstantString" string="Route To Label"/>
+      </nodes>
+      <nodes xmi:type="gen_edMiscinfoChecking.subflow:FCMComposite_1" xmi:id="FCMComposite_1_4" location="75,36">
+        <translation xmi:type="utility:ConstantString" string="edMiscinfoChecking"/>
+      </nodes>
+      <connections xmi:type="eflow:FCMConnection" xmi:id="FCMConnection_1" targetNode="FCMComposite_1_10" sourceNode="FCMComposite_1_2" sourceTerminalName="OutTerminal.out" targetTerminalName="InTerminal.in"/>
+      <connections xmi:type="eflow:FCMConnection" xmi:id="FCMConnection_7" targetNode="FCMComposite_1_11" sourceNode="FCMComposite_1_6" sourceTerminalName="OutTerminal.out" targetTerminalName="InTerminal.in"/>
+      <connections xmi:type="eflow:FCMConnection" xmi:id="FCMConnection_20" targetNode="FCMComposite_1_8" sourceNode="FCMComposite_1_15" sourceTerminalName="Match" targetTerminalName="InTerminal.in"/>
+      <connections xmi:type="eflow:FCMConnection" xmi:id="FCMConnection_21" targetNode="FCMComposite_1_9" sourceNode="FCMComposite_1_15" sourceTerminalName="OutTerminal.default" targetTerminalName="InTerminal.in"/>
+      <connections xmi:type="eflow:FCMConnection" xmi:id="FCMConnection_22" targetNode="FCMComposite_1_2" sourceNode="FCMComposite_1_15" sourceTerminalName="OutTerminal.failure" targetTerminalName="InTerminal.in"/>
+      <connections xmi:type="eflow:FCMConnection" xmi:id="FCMConnection_23" targetNode="FCMComposite_1_2" sourceNode="FCMComposite_1_11" sourceTerminalName="OutTerminal.failure" targetTerminalName="InTerminal.in"/>
+      <connections xmi:type="eflow:FCMConnection" xmi:id="FCMConnection_2" targetNode="FCMComposite_1_17" sourceNode="FCMComposite_1_3" sourceTerminalName="OutTerminal.out" targetTerminalName="InTerminal.Input"/>
+      <connections xmi:type="eflow:FCMConnection" xmi:id="FCMConnection_3" targetNode="FCMComposite_1_1" sourceNode="FCMComposite_1_14" sourceTerminalName="OutTerminal.out" targetTerminalName="InTerminal.Input"/>
+      <connections xmi:type="eflow:FCMConnection" xmi:id="FCMConnection_11" targetNode="FCMComposite_1_7" sourceNode="FCMComposite_1_5" sourceTerminalName="OutTerminal.out" targetTerminalName="InTerminal.Input"/>
+      <connections xmi:type="eflow:FCMConnection" xmi:id="FCMConnection_12" targetNode="FCMComposite_1_19" sourceNode="FCMComposite_1_13" sourceTerminalName="OutTerminal.out" targetTerminalName="InTerminal.Input"/>
+      <connections xmi:type="eflow:FCMConnection" xmi:id="FCMConnection_13" targetNode="FCMComposite_1_18" sourceNode="FCMComposite_1_16" sourceTerminalName="OutTerminal.out" targetTerminalName="InTerminal.Input"/>
+      <connections xmi:type="eflow:FCMConnection" xmi:id="FCMConnection_14" targetNode="FCMComposite_1_15" sourceNode="FCMComposite_1_7" sourceTerminalName="Output" targetTerminalName="InTerminal.in"/>
+      <connections xmi:type="eflow:FCMConnection" xmi:id="FCMConnection_15" targetNode="FCMComposite_1_15" sourceNode="FCMComposite_1_18" sourceTerminalName="Output" targetTerminalName="InTerminal.in"/>
+      <connections xmi:type="eflow:FCMConnection" xmi:id="FCMConnection_17" targetNode="FCMComposite_1_15" sourceNode="FCMComposite_1_1" sourceTerminalName="Output" targetTerminalName="InTerminal.in"/>
+      <connections xmi:type="eflow:FCMConnection" xmi:id="FCMConnection_18" targetNode="FCMComposite_1_15" sourceNode="FCMComposite_1_17" sourceTerminalName="Output" targetTerminalName="InTerminal.in"/>
+      <connections xmi:type="eflow:FCMConnection" xmi:id="FCMConnection_19" targetNode="FCMComposite_1_15" sourceNode="FCMComposite_1_19" sourceTerminalName="Output" targetTerminalName="InTerminal.in"/>
+      <connections xmi:type="eflow:FCMConnection" xmi:id="FCMConnection_24" targetNode="FCMComposite_1_20" sourceNode="FCMComposite_1_11" sourceTerminalName="OutTerminal.out" targetTerminalName="InTerminal.in"/>
+      <connections xmi:type="eflow:FCMConnection" xmi:id="FCMConnection_25" targetNode="FCMComposite_1_2" sourceNode="FCMComposite_1_11" sourceTerminalName="OutTerminal.keyNotFound" targetTerminalName="InTerminal.in"/>
+      <connections xmi:type="eflow:FCMConnection" xmi:id="FCMConnection_26" targetNode="FCMComposite_1_2" sourceNode="FCMComposite_1_20" sourceTerminalName="OutTerminal.failure" targetTerminalName="InTerminal.in"/>
+      <connections xmi:type="eflow:FCMConnection" xmi:id="FCMConnection_4" targetNode="OutTerminal.Output_1" sourceNode="FCMComposite_1_8" sourceTerminalName="OutTerminal.out" targetTerminalName="InTerminal.in"/>
+      <connections xmi:type="eflow:FCMConnection" xmi:id="FCMConnection_5" targetNode="OutTerminal.Output_1" sourceNode="FCMComposite_1_9" sourceTerminalName="OutTerminal.out" targetTerminalName="InTerminal.in"/>
+      <connections xmi:type="eflow:FCMConnection" xmi:id="FCMConnection_6" targetNode="FCMComposite_1_4" sourceNode="InTerminal.Input_1" sourceTerminalName="OutTerminal.out" targetTerminalName="InTerminal.Input"/>
+      <connections xmi:type="eflow:FCMConnection" xmi:id="FCMConnection_8" targetNode="FCMComposite_1_6" sourceNode="FCMComposite_1_4" sourceTerminalName="OutTerminal.Output" targetTerminalName="InTerminal.in"/>
+    </composition>
+    <propertyOrganizer/>
+    <stickyBoard/>
+  </eClassifiers>
+</ecore:EPackage>

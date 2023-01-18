@@ -1,0 +1,47 @@
+BROKER SCHEMA ed
+
+	
+DECLARE ns NAMESPACE 'https://edelivery.egov.bg/services/integration';
+DECLARE ns2 NAMESPACE 'http://schemas.datacontract.org/2004/07/EDelivery.Common.DataContracts';
+DECLARE xsi NAMESPACE  'http://www.w3.org/2001/XMLSchema-instance';
+
+CREATE COMPUTE MODULE CheckPersonHasRegistration_Response
+	CREATE FUNCTION Main() RETURNS BOOLEAN
+	BEGIN
+
+	
+	SET OutputRoot.JSON.Data.uid.type = 'EGN';
+	SET OutputRoot.JSON.Data.uid.value = InputRoot.SOAP.Body.ns:CheckPersonHasRegistrationResponse.ns:CheckPersonHasRegistrationResult.ns2:PersonIdentificator;
+	SET OutputRoot.JSON.Data.name = InputRoot.SOAP.Body.ns:CheckPersonHasRegistrationResponse.ns:CheckPersonHasRegistrationResult.ns2:Name;
+	SET OutputRoot.JSON.Data.isActive = InputRoot.SOAP.Body.ns:CheckPersonHasRegistrationResponse.ns:CheckPersonHasRegistrationResult.ns2:HasRegistration;
+	
+	IF OutputRoot.JSON.Data.isActive='true' THEN
+		DECLARE i INTEGER 1;
+		
+		
+		FOR source AS InputRoot.SOAP.Body.ns:CheckPersonHasRegistrationResponse.ns:CheckPersonHasRegistrationResult.ns2:AccessibleProfiles.ns2:DcSubjectShortInfo[] DO
+			IF i=1 THEN
+			CREATE FIELD OutputRoot.JSON.Data.registrationProfile IDENTITY(JSON.Array)registrationProfile;
+			END IF;
+			SET OutputRoot.JSON.Data.registrationProfile[i].uid.type = 'EIK';
+			SET OutputRoot.JSON.Data.registrationProfile[i].uid.value = source.ns2:EIK;
+			SET OutputRoot.JSON.Data.registrationProfile[i].name = source.ns2:Name;
+			
+			CASE UPPER(source.ns2:ProfileType)
+				WHEN 'INSTITUTION' THEN
+					SET OutputRoot.JSON.Data.registrationProfile[i].type = 'STATEADMINISTRATION';
+				ELSE 
+				SET OutputRoot.JSON.Data.registrationProfile[i].type = UPPER(source.ns2:ProfileType);
+			END CASE;
+	
+			
+			SET i = i + 1;
+		END FOR;
+	END IF;
+			
+		RETURN TRUE;
+	END;
+
+
+END MODULE;
+	

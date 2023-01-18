@@ -1,0 +1,69 @@
+BROKER SCHEMA gen
+
+
+
+CREATE COMPUTE MODULE "miscinfoChecking_Compute"
+	CREATE FUNCTION Main() RETURNS BOOLEAN
+	BEGIN
+
+	--	CALL CopyMessageHeaders();
+		CALL CopyEntireMessage();
+		CALL CopyLocalEvironment();
+
+		
+		SET OutputLocalEnvironment.Variables.systemOID = SUBSTRING(SUBSTRING(InputLocalEnvironment.REST.Input.Parameters."miscinfo" AFTER 'OID:') BEFORE '/');
+		IF OutputLocalEnvironment.Variables.systemOID IS NULL THEN
+			SET OutputLocalEnvironment.Variables.systemOID = SUBSTRING(SUBSTRING(InputRoot.HTTPInputHeader."Dp-Miscinfo" AFTER 'OID:') BEFORE '/');
+		END IF;
+		
+		SET OutputLocalEnvironment.Variables.CN = SUBSTRING(SUBSTRING(InputLocalEnvironment.REST.Input.Parameters."miscinfo" AFTER 'CN=') BEFORE '/');
+		IF OutputLocalEnvironment.Variables.CN IS NULL THEN
+			SET OutputLocalEnvironment.Variables.CN = SUBSTRING(SUBSTRING(InputRoot.HTTPInputHeader."Dp-Miscinfo" AFTER 'CN=') BEFORE '|');
+		END IF;
+		
+		SET OutputLocalEnvironment.Variables.representedPersonID = SUBSTRING(SUBSTRING(InputLocalEnvironment.REST.Input.Parameters."miscinfo" AFTER 'representedPersonID:') BEFORE '|');
+		IF OutputLocalEnvironment.Variables.representedPersonID IS NULL THEN
+			SET OutputLocalEnvironment.Variables.representedPersonID = SUBSTRING(SUBSTRING(InputRoot.HTTPInputHeader."Dp-Miscinfo" AFTER 'representedPersonID:') BEFORE '|');
+		END IF;
+		
+		SET OutputLocalEnvironment.Variables.correspondentOID = SUBSTRING(SUBSTRING(InputLocalEnvironment.REST.Input.Parameters."miscinfo" AFTER 'correspondentOID:') BEFORE '|');
+		IF OutputLocalEnvironment.Variables.correspondentOID IS NULL THEN
+			SET OutputLocalEnvironment.Variables.correspondentOID = SUBSTRING(SUBSTRING(InputRoot.HTTPInputHeader."Dp-Miscinfo" AFTER 'correspondentOID:') BEFORE '|');
+		END IF;
+		
+		SET OutputLocalEnvironment.Variables.operatorID = SUBSTRING(InputLocalEnvironment.REST.Input.Parameters."miscinfo" AFTER 'operatorID:');
+		IF OutputLocalEnvironment.Variables.operatorID IS NULL THEN
+			SET OutputLocalEnvironment.Variables.operatorID = SUBSTRING(InputRoot.HTTPInputHeader."Dp-Miscinfo" AFTER 'operatorID:');
+		END IF;
+		
+		IF OutputLocalEnvironment.Variables.CN IS NULL THEN
+	
+			SET OutputLocalEnvironment.Destination.HTTP.ReplyStatusCode = 401;
+			
+			SET OutputRoot.JSON.Data.failureOrigin = 'OAUTH';
+			SET OutputRoot.JSON.Data.cause[1].code = '401';
+			SET OutputRoot.JSON.Data.cause[1].message = 'Authentication parameter does not exist.';
+
+
+		END IF;
+		RETURN TRUE;
+	END;
+
+	CREATE PROCEDURE CopyMessageHeaders() BEGIN
+		DECLARE I INTEGER 1;
+		DECLARE J INTEGER;
+		SET J = CARDINALITY(InputRoot.*[]);
+		WHILE I < J DO
+			SET OutputRoot.*[I] = InputRoot.*[I];
+			SET I = I + 1;
+		END WHILE;
+	END;
+
+	CREATE PROCEDURE CopyEntireMessage() BEGIN
+		SET OutputRoot = InputRoot;
+	END;
+	CREATE PROCEDURE CopyLocalEvironment() BEGIN
+		SET OutputLocalEnvironment = InputLocalEnvironment;	
+	END;
+END MODULE;
+

@@ -1,0 +1,61 @@
+BROKER SCHEMA ed
+
+
+
+CREATE COMPUTE MODULE SendMessage_Request
+	
+DECLARE ns NAMESPACE 'https://edelivery.egov.bg/services/integration';
+DECLARE ns2 NAMESPACE 'http://schemas.datacontract.org/2004/07/EDelivery.Common.DataContracts';
+DECLARE xsi NAMESPACE  'http://www.w3.org/2001/XMLSchema-instance';
+DECLARE eDeliveryAddressURL EXTERNAL CHARACTER '';
+
+	CREATE FUNCTION Main() RETURNS BOOLEAN
+	BEGIN
+	DECLARE i INTEGER 1;
+
+		CALL SetLocalEvironmentVariables();
+		
+		SET OutputRoot.XMLNSC.ns:SendMessage.ns:message.ns2:Title = InputRoot.JSON.Data.messageData.title;
+		SET OutputRoot.XMLNSC.ns:SendMessage.ns:message.ns2:MessageText = InputRoot.JSON.Data.messageData.messageText;
+		
+		SET i=1;	
+		FOR source_attachment AS InputRoot.JSON.Data.messageData.attachments.*[] DO
+			SET OutputRoot.XMLNSC.ns:SendMessage.ns:message.ns2:AttachedDocuments.ns2:DcDocument[i].ns2:Content = InputRoot.JSON.Data.messageData.attachments.Item[i].content;
+	  		SET i=i+1;
+		END FOR;		
+		
+		SET OutputLocalEnvironment.Variables.SenderType = 'NOSENDER';
+		
+		FOR source AS InputRoot.JSON.Data.actors.*[] DO
+	     	CASE UPPER(InputRoot.JSON.Data.actors.*[i].role)
+	  			WHEN 'RECEIVER' THEN
+	    			SET OutputRoot.XMLNSC.ns:SendMessage.ns:receiverType = InputRoot.JSON.Data.actors.Item[i].type;
+					SET OutputRoot.XMLNSC.ns:SendMessage.ns:receiverUniqueIdentifier = InputRoot.JSON.Data.actors.Item[i].uid.value;
+
+					SET OutputRoot.XMLNSC.ns:SendMessage.ns:receiverPhone = InputRoot.JSON.Data.actors.Item[i].info.contacts.phone;
+					SET OutputRoot.XMLNSC.ns:SendMessage.ns:receiverEmail = InputRoot.JSON.Data.actors.Item[i].info.contacts.email;
+
+				WHEN 'SENDER' THEN
+					SET OutputLocalEnvironment.Variables.SenderType = InputRoot.JSON.Data.actors.Item[i].type;
+					SET OutputRoot.XMLNSC.ns:SendMessage.ns:senderType = OutputLocalEnvironment.Variables.SenderType;
+					SET OutputRoot.XMLNSC.ns:SendMessage.ns:senderUniqueIdentifier = InputRoot.JSON.Data.actors.Item[i].uid.value;
+			END CASE;
+     		SET i = i + 1;
+		END FOR;
+		
+	 		
+		SET OutputRoot.XMLNSC.ns:SendMessage.ns:serviceOID = InputLocalEnvironment.REST.Input.Parameters.serviceOID;
+		SET OutputRoot.XMLNSC.ns:SendMessage.ns:operatorEGN = InputLocalEnvironment.Variables.operatorID;
+		
+
+		RETURN TRUE;
+	END;
+	 
+	CREATE PROCEDURE SetLocalEvironmentVariables() BEGIN
+		SET OutputLocalEnvironment.Destination.SOAP.Request.Transport.HTTP.WebServiceURL = eDeliveryAddressURL;
+  		SET OutputLocalEnvironment.Destination.SOAP.Request.Operation = 'SendMessage';
+  		SET OutputLocalEnvironment.Variables.systemOID =  InputLocalEnvironment.Variables.systemOID;
+	    SET OutputLocalEnvironment.Destination.RouterList.DestinationData[1].labelName = InputLocalEnvironment.Variables.systemLABEL ||'-'||OutputLocalEnvironment.Destination.SOAP.Request.Operation;
+
+	END;
+END MODULE;

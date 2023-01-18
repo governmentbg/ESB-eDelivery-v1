@@ -1,0 +1,30 @@
+BROKER SCHEMA ed
+
+
+		
+CREATE COMPUTE MODULE GetRegisteredInstitutions_Request
+	
+	DECLARE ns NAMESPACE 'https://edelivery.egov.bg/services/integration';
+	DECLARE xsi NAMESPACE  'http://www.w3.org/2001/XMLSchema-instance';
+	DECLARE env NAMESPACE 'http://www.w3.org/2003/05/soap-envelope';
+	DECLARE eDeliveryAddressURL EXTERNAL CHARACTER '';
+
+	CREATE FUNCTION Main() RETURNS BOOLEAN
+	BEGIN
+		
+		CALL SetLocalEvironmentVariables();
+		
+		SET OutputRoot.XMLNSC.ns:GetRegisteredInstitutions = '';
+				
+		
+		RETURN TRUE;
+	END;
+	
+	CREATE PROCEDURE SetLocalEvironmentVariables() BEGIN
+ 		SET OutputLocalEnvironment.Destination.SOAP.Request.Transport.HTTP.WebServiceURL = eDeliveryAddressURL;
+  		SET OutputLocalEnvironment.Destination.SOAP.Request.Operation = 'GetRegisteredInstitutions';
+  		SET OutputLocalEnvironment.Variables.systemOID =  InputLocalEnvironment.Variables.systemOID;
+   		SET OutputLocalEnvironment.Destination.RouterList.DestinationData[1].labelName = InputLocalEnvironment.Variables.systemLABEL ||'-'||OutputLocalEnvironment.Destination.SOAP.Request.Operation;
+
+	END;
+END MODULE;

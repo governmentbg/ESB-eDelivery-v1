@@ -1,0 +1,1024 @@
+{
+  "swagger" : "2.0",
+  "info" : {
+    "title" : "DAEU_eDelivery",
+    "version" : "1.0.0",
+    "description" : "DAEU_eDelivery"
+  },
+  "basePath" : "/ed/connector/v1",
+  "schemes" : [ "https" ],
+  "tags" : [ {
+    "name" : "eDelivery",
+    "description" : "All translations to eDelivery"
+  }, {
+    "name" : "ePayment",
+    "description" : "All translations to ePayment"
+  }, {
+    "name" : "statistics",
+    "description" : "Functionality providing common statistics"
+  }, {
+    "name" : "dummy",
+    "description" : "Functionality providing dummy data without system implementation"
+  } ],
+  "paths" : {
+    "/sendMessage" : {
+      "post" : {
+        "operationId" : "postSendMessage",
+        "description" : "Invoke SendMessage operation (eDelivery)",
+        "tags" : [ "eDelivery" ],
+        "consumes" : [ "application/json" ],
+        "produces" : [ "application/json" ],
+        "parameters" : [ {
+          "$ref" : "#/parameters/authorisationParam"
+        }, {
+          "$ref" : "#/parameters/serviceOIDParam"
+        }, {
+          "$ref" : "#/parameters/operatorIDParam"
+        }, {
+          "name" : "message",
+          "in" : "body",
+          "schema" : {
+            "$ref" : "#/definitions/SendMessageRequest"
+          },
+          "description" : "The request body for the operation",
+          "required" : true
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "The operation was successful",
+            "schema" : {
+              "$ref" : "#/definitions/SendMessageResponse"
+            }
+          },
+          "400" : {
+            "description" : "Bad request",
+            "schema" : {
+              "$ref" : "#/definitions/CommonException"
+            }
+          },
+          "500" : {
+            "description" : "Error in processing the request",
+            "schema" : {
+              "$ref" : "#/definitions/ProcessingException"
+            }
+          }
+        }
+      }
+    },
+    "/getReceivedMessageContent" : {
+      "get" : {
+        "operationId" : "getReceivedMessageContent",
+        "description" : "Invoke GetReceivedMessageContent operation (eDelivery)",
+        "tags" : [ "eDelivery" ],
+        "produces" : [ "application/json" ],
+        "parameters" : [ {
+          "$ref" : "#/parameters/authorisationParam"
+        }, {
+          "$ref" : "#/parameters/serviceOIDParam"
+        }, {
+          "$ref" : "#/parameters/operatorIDParam"
+        }, {
+          "name" : "messageId",
+          "in" : "query",
+          "type" : "string",
+          "required" : true
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "The operation was successful",
+            "schema" : {
+              "$ref" : "#/definitions/ReceivedMessageContentResponse"
+            }
+          },
+          "400" : {
+            "description" : "Bad request",
+            "schema" : {
+              "$ref" : "#/definitions/CommonException"
+            }
+          },
+          "500" : {
+            "description" : "Error in processing the request",
+            "schema" : {
+              "$ref" : "#/definitions/ProcessingException"
+            }
+          }
+        }
+      }
+    },
+    "/getSentMessageStatus" : {
+      "get" : {
+        "operationId" : "getSentMessageStatus",
+        "description" : "Invoke GetSentMessageStatus operation (eDelivery)",
+        "tags" : [ "eDelivery" ],
+        "produces" : [ "application/json" ],
+        "parameters" : [ {
+          "$ref" : "#/parameters/authorisationParam"
+        }, {
+          "$ref" : "#/parameters/serviceOIDParam"
+        }, {
+          "$ref" : "#/parameters/operatorIDParam"
+        }, {
+          "name" : "messageId",
+          "in" : "query",
+          "type" : "string",
+          "required" : true
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "The operation was successful",
+            "schema" : {
+              "$ref" : "#/definitions/SendMessageStatusResponse"
+            }
+          },
+          "400" : {
+            "description" : "Bad request",
+            "schema" : {
+              "$ref" : "#/definitions/CommonException"
+            }
+          },
+          "500" : {
+            "description" : "Error in processing the request",
+            "schema" : {
+              "$ref" : "#/definitions/ProcessingException"
+            }
+          }
+        }
+      }
+    },
+    "/getRegisteredInstitutions" : {
+      "get" : {
+        "operationId" : "getRegisteredInstitutions",
+        "description" : "Invoke GetRegisteredInstitutions operation (eDelivery)",
+        "tags" : [ "eDelivery" ],
+        "consumes" : [ "application/json" ],
+        "produces" : [ "application/json" ],
+        "parameters" : [ {
+          "$ref" : "#/parameters/authorisationParam"
+        }, {
+          "$ref" : "#/parameters/serviceOIDParam"
+        }, {
+          "$ref" : "#/parameters/operatorIDParam"
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "The operation was successful",
+            "schema" : {
+              "$ref" : "#/definitions/RegisteredInstitutionsResponse"
+            }
+          },
+          "400" : {
+            "description" : "Bad request",
+            "schema" : {
+              "$ref" : "#/definitions/CommonException"
+            }
+          },
+          "500" : {
+            "description" : "Error in processing the request",
+            "schema" : {
+              "$ref" : "#/definitions/ProcessingException"
+            }
+          }
+        }
+      }
+    },
+    "/getReceivedMessagesListPaged" : {
+      "get" : {
+        "operationId" : "getReceivedMessagesListPaged",
+        "description" : "Invoke GetReceivedMessagesListPaged operation (eDelivery)",
+        "tags" : [ "eDelivery" ],
+        "produces" : [ "application/json" ],
+        "parameters" : [ {
+          "$ref" : "#/parameters/authorisationParam"
+        }, {
+          "$ref" : "#/parameters/serviceOIDParam"
+        }, {
+          "$ref" : "#/parameters/operatorIDParam"
+        }, {
+          "name" : "onlyNew",
+          "in" : "query",
+          "type" : "boolean",
+          "required" : true
+        }, {
+          "$ref" : "#/parameters/pageNumberParam"
+        }, {
+          "$ref" : "#/parameters/pageSizeParam"
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "The operation was successful",
+            "schema" : {
+              "$ref" : "#/definitions/ReceivedMessagesResponse"
+            }
+          },
+          "400" : {
+            "description" : "Bad request",
+            "schema" : {
+              "$ref" : "#/definitions/CommonException"
+            }
+          },
+          "500" : {
+            "description" : "Error in processing the request",
+            "schema" : {
+              "$ref" : "#/definitions/ProcessingException"
+            }
+          }
+        }
+      }
+    },
+    "/sendMessageInReplyTo" : {
+      "post" : {
+        "operationId" : "postSendMessageInReplyTo",
+        "description" : "Invoke SendMessageInReplyTo operation (eDelivery)",
+        "tags" : [ "eDelivery" ],
+        "consumes" : [ "application/json" ],
+        "produces" : [ "application/json" ],
+        "parameters" : [ {
+          "$ref" : "#/parameters/authorisationParam"
+        }, {
+          "$ref" : "#/parameters/serviceOIDParam"
+        }, {
+          "$ref" : "#/parameters/operatorIDParam"
+        }, {
+          "name" : "message",
+          "in" : "body",
+          "schema" : {
+            "$ref" : "#/definitions/SendMessageInReplyToRequest"
+          },
+          "description" : "The request body for the operation",
+          "required" : true
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "The operation was successful",
+            "schema" : {
+              "$ref" : "#/definitions/SendMessageResponse"
+            }
+          },
+          "400" : {
+            "description" : "Bad request",
+            "schema" : {
+              "$ref" : "#/definitions/CommonException"
+            }
+          },
+          "500" : {
+            "description" : "Error in processing the request",
+            "schema" : {
+              "$ref" : "#/definitions/ProcessingException"
+            }
+          }
+        }
+      }
+    },
+    "/getRepresentedMessagesListPaged" : {
+      "get" : {
+        "tags" : [ "eDelivery", "dummy" ],
+        "operationId" : "getRepresentedMessagesListPaged",
+        "description" : "Invoke Rest services /messages/outbox and /messages/inbox (eDelivery)",
+        "consumes" : [ "application/json" ],
+        "produces" : [ "application/json" ],
+        "parameters" : [ {
+          "$ref" : "#/parameters/authorisationParam"
+        }, {
+          "$ref" : "#/parameters/messageDirectionParam"
+        }, {
+          "name" : "profileID",
+          "in" : "query",
+          "type" : "string",
+          "required" : true
+        }, {
+          "$ref" : "#/parameters/pageNumberParam"
+        }, {
+          "$ref" : "#/parameters/pageSizeParam"
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "The operation was successful",
+            "schema" : {
+              "$ref" : "#/definitions/MessagesBoxResponse"
+            }
+          },
+          "400" : {
+            "description" : "Bad request",
+            "schema" : {
+              "$ref" : "#/definitions/CommonException"
+            }
+          },
+          "401" : {
+            "description" : "Authentication Error",
+            "schema" : {
+              "$ref" : "#/definitions/CommonException"
+            }
+          },
+          "500" : {
+            "description" : "Error in processing the request",
+            "schema" : {
+              "$ref" : "#/definitions/ProcessingException"
+            }
+          }
+        }
+      }
+    },
+    "/getSubjectInfo" : {
+      "get" : {
+        "tags" : [ "eDelivery" ],
+        "operationId" : "getSubjectInfo",
+        "description" : "Invoke GetSubjectInfo operation (eDelivery)",
+        "produces" : [ "application/json" ],
+        "parameters" : [ {
+          "$ref" : "#/parameters/authorisationParam"
+        }, {
+          "$ref" : "#/parameters/subjectIDParam"
+        }, {
+          "$ref" : "#/parameters/operatorIDParam"
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "The operation was successful",
+            "schema" : {
+              "$ref" : "#/definitions/SubjectInfoResponse"
+            }
+          },
+          "400" : {
+            "description" : "Bad request",
+            "schema" : {
+              "$ref" : "#/definitions/CommonException"
+            }
+          },
+          "500" : {
+            "description" : "Error in processing the request",
+            "schema" : {
+              "$ref" : "#/definitions/ProcessingException"
+            }
+          }
+        }
+      }
+    },
+    "/getPersonRegistrationInfo" : {
+      "get" : {
+        "tags" : [ "eDelivery" ],
+        "operationId" : "getPersonRegistrationInfo",
+        "description" : "Invoke CheckPersonHasRegistration operation (eDelivery)",
+        "produces" : [ "application/json" ],
+        "parameters" : [ {
+          "$ref" : "#/parameters/authorisationParam"
+        }, {
+          "$ref" : "#/parameters/personIDParam"
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "The operation was successful",
+            "schema" : {
+              "$ref" : "#/definitions/PersonRegistrationInfoResponse"
+            }
+          },
+          "400" : {
+            "description" : "Bad request",
+            "schema" : {
+              "$ref" : "#/definitions/CommonException"
+            }
+          },
+          "500" : {
+            "description" : "Error in processing the request",
+            "schema" : {
+              "$ref" : "#/definitions/ProcessingException"
+            }
+          }
+        }
+      }
+    }
+  },
+  "parameters" : {
+    "pageNumberParam" : {
+      "in" : "query",
+      "name" : "pageNumber",
+      "required" : false,
+      "type" : "integer",
+      "minimum" : 0,
+      "description" : "The page number from which to collect the result set"
+    },
+    "pageSizeParam" : {
+      "in" : "query",
+      "name" : "pageSize",
+      "required" : false,
+      "type" : "integer",
+      "minimum" : 1,
+      "maximum" : 50,
+      "default" : 20,
+      "description" : "The number of items in page to return"
+    },
+    "messageDirectionParam" : {
+      "in" : "query",
+      "name" : "direction",
+      "required" : false,
+      "type" : "string",
+      "enum" : [ "SENT", "RECEIVED", "RECEIVED_NEW" ]
+    },
+    "paymentTypeParam" : {
+      "in" : "query",
+      "name" : "paymentType",
+      "required" : true,
+      "type" : "string",
+      "enum" : [ "PENDING", "PAID" ]
+    },
+    "paymentStatParam" : {
+      "name" : "requestType",
+      "in" : "query",
+      "type" : "string",
+      "required" : true,
+      "enum" : [ "PAYMENTS", "REQUEST" ]
+    },
+    "originTypeParam" : {
+      "in" : "query",
+      "name" : "originSystem",
+      "required" : true,
+      "description" : "Available systems",
+      "type" : "string",
+      "enum" : [ "OAUTH", "INTEGRATION", "EDELIVERY", "EPAYMENT", "REGIX" ]
+    },
+    "authorisationParam" : {
+      "name" : "miscinfo",
+      "in" : "header",
+      "type" : "string",
+      "required" : false
+    },
+    "serviceOIDParam" : {
+      "name" : "serviceOID",
+      "in" : "header",
+      "type" : "string",
+      "required" : false
+    },
+    "operatorIDParam" : {
+      "name" : "operatorUID",
+      "in" : "header",
+      "type" : "string",
+      "required" : false
+    },
+    "subjectIDParam" : {
+      "name" : "electronicId",
+      "in" : "query",
+      "type" : "string",
+      "required" : true
+    },
+    "personIDParam" : {
+      "name" : "personUID",
+      "in" : "query",
+      "type" : "string",
+      "required" : false
+    },
+    "startDateParam" : {
+      "name" : "startDate",
+      "in" : "query",
+      "type" : "string",
+      "required" : true,
+      "format" : "full-date"
+    },
+    "endDateParam" : {
+      "name" : "endDate",
+      "in" : "query",
+      "type" : "string",
+      "required" : true,
+      "format" : "full-date"
+    },
+    "monthParam" : {
+      "name" : "month",
+      "in" : "query",
+      "type" : "string",
+      "required" : true,
+      "format" : "date-fullyear\"-\"date-month"
+    }
+  },
+  "definitions" : {
+    "OriginSystem" : {
+      "title" : "OriginSystem",
+      "description" : "Available systems",
+      "type" : "string",
+      "enum" : [ "OAUTH", "INTEGRATION", "EDELIVERY", "EPAYMENT", "REGIX" ]
+    },
+    "CommonException" : {
+      "title" : "CommonException",
+      "type" : "object",
+      "properties" : {
+        "failureOrigin" : {
+          "$ref" : "#/definitions/OriginSystem"
+        },
+        "cause" : {
+          "type" : "array",
+          "items" : {
+            "$ref" : "#/definitions/Cause"
+          }
+        }
+      }
+    },
+    "ProcessingException" : {
+      "title" : "ProcessingException",
+      "type" : "object",
+      "properties" : {
+        "failureOrigin" : {
+          "$ref" : "#/definitions/OriginSystem"
+        },
+        "cause" : {
+          "type" : "array",
+          "items" : {
+            "$ref" : "#/definitions/Cause"
+          }
+        },
+        "retryAfter" : {
+          "description" : "an optional parameter that specifies the required time in seconds to wait between requests",
+          "type" : "integer",
+          "format" : "int32"
+        }
+      },
+      "required" : [ "retryAfter" ]
+    },
+    "Cause" : {
+      "title" : "Cause",
+      "type" : "object",
+      "properties" : {
+        "code" : {
+          "type" : "string"
+        },
+        "message" : {
+          "type" : "string"
+        }
+      },
+      "required" : [ "code", "message" ]
+    },
+    "CommonTypeUID" : {
+      "type" : "object",
+      "properties" : {
+        "type" : {
+          "type" : "string",
+          "enum" : [ "EGN", "BULSTAT", "EIK", "OID" ]
+        },
+        "value" : {
+          "type" : "string"
+        }
+      }
+    },
+    "CommonTypeContacts" : {
+      "type" : "object",
+      "properties" : {
+        "phone" : {
+          "type" : "string"
+        },
+        "email" : {
+          "type" : "string"
+        },
+        "address" : {
+          "$ref" : "#/definitions/CommonTypeAddress"
+        }
+      }
+    },
+    "CommonTypeAddress" : {
+      "type" : "object",
+      "properties" : {
+        "country" : {
+          "type" : "string"
+        },
+        "city" : {
+          "type" : "string"
+        },
+        "state" : {
+          "type" : "string"
+        },
+        "zip" : {
+          "type" : "string"
+        },
+        "address" : {
+          "type" : "string"
+        }
+      }
+    },
+    "CommonTypeBankAccount" : {
+      "type" : "object",
+      "properties" : {
+        "name" : {
+          "type" : "string"
+        },
+        "bank" : {
+          "type" : "string"
+        },
+        "bic" : {
+          "type" : "string"
+        },
+        "iban" : {
+          "type" : "string"
+        }
+      }
+    },
+    "CommonTypeInfo" : {
+      "type" : "object",
+      "properties" : {
+        "contacts" : {
+          "$ref" : "#/definitions/CommonTypeContacts"
+        },
+        "bankAccount" : {
+          "$ref" : "#/definitions/CommonTypeBankAccount"
+        }
+      }
+    },
+    "CommonTypeActor" : {
+      "type" : "object",
+      "properties" : {
+        "type" : {
+          "type" : "string",
+          "enum" : [ "PERSON", "LEGALPERSON", "STATEADMINISTRATION", "LICEPOCHL1AL2" ]
+        },
+        "uid" : {
+          "$ref" : "#/definitions/CommonTypeUID"
+        },
+        "name" : {
+          "type" : "string"
+        },
+        "info" : {
+          "$ref" : "#/definitions/CommonTypeInfo"
+        }
+      },
+      "required" : [ "type" ]
+    },
+    "CorrespondantProfile" : {
+      "allOf" : [ {
+        "$ref" : "#/definitions/CommonTypeActor"
+      } ],
+      "type" : "object",
+      "required" : [ "role" ],
+      "properties" : {
+        "role" : {
+          "type" : "string",
+          "enum" : [ "SENDER", "RECEIVER" ]
+        },
+        "isActive" : {
+          "type" : "boolean",
+          "default" : false
+        }
+      }
+    },
+    "MessageDirectionType" : {
+      "title" : "MessageDirection",
+      "type" : "string",
+      "enum" : [ "SENT", "RECEIVED", "RECEIVED_NEW" ]
+    },
+    "MessageModel" : {
+      "type" : "object",
+      "properties" : {
+        "messageId" : {
+          "format" : "int32",
+          "type" : "integer"
+        },
+        "title" : {
+          "type" : "string"
+        },
+        "isDraft" : {
+          "type" : "boolean",
+          "default" : false
+        },
+        "dateCreated" : {
+          "format" : "date-time",
+          "type" : "string"
+        },
+        "dateSent" : {
+          "format" : "date-time",
+          "type" : "string"
+        },
+        "dateReceived" : {
+          "format" : "date-time",
+          "type" : "string"
+        },
+        "senderLoginElectronicSubjectId" : {
+          "format" : "uuid",
+          "type" : "string",
+          "example" : "00000000-0000-0000-0000-000000000000"
+        },
+        "senderLoginElectronicSubjectName" : {
+          "type" : "string"
+        },
+        "senderProfileElectronicSubjectId" : {
+          "format" : "uuid",
+          "type" : "string",
+          "example" : "00000000-0000-0000-0000-000000000000"
+        },
+        "senderProfileElectronicSubjectName" : {
+          "type" : "string"
+        },
+        "receiverLoginElectronicSubjectId" : {
+          "format" : "uuid",
+          "type" : "string",
+          "example" : "00000000-0000-0000-0000-000000000000"
+        },
+        "receiverLoginElectronicSubjectName" : {
+          "type" : "string"
+        },
+        "receiverProfileElectronicSubjectId" : {
+          "format" : "uuid",
+          "type" : "string",
+          "example" : "00000000-0000-0000-0000-000000000000"
+        },
+        "receiverProfileElectronicSubjectName" : {
+          "type" : "string"
+        }
+      }
+    },
+    "MessagesListModel" : {
+      "type" : "object",
+      "properties" : {
+        "messages" : {
+          "type" : "array",
+          "items" : {
+            "$ref" : "#/definitions/MessageModel"
+          }
+        },
+        "count" : {
+          "type" : "integer"
+        }
+      }
+    },
+    "AttachmentModel" : {
+      "type" : "object",
+      "properties" : {
+        "type" : {
+          "type" : "string"
+        },
+        "content" : {
+          "type" : "string"
+        }
+      }
+    },
+    "MessageData" : {
+      "type" : "object",
+      "properties" : {
+        "title" : {
+          "type" : "string"
+        },
+        "messageText" : {
+          "type" : "string"
+        },
+        "attachments" : {
+          "type" : "array",
+          "items" : {
+            "$ref" : "#/definitions/AttachmentModel"
+          }
+        }
+      }
+    },
+    "MessageBoxModel" : {
+      "type" : "object",
+      "properties" : {
+        "messageId" : {
+          "type" : "integer",
+          "format" : "int32"
+        },
+        "dateSent" : {
+          "type" : "string",
+          "format" : "date-time"
+        },
+        "dateReceived" : {
+          "type" : "string",
+          "format" : "date-time"
+        },
+        "subject" : {
+          "type" : "string"
+        },
+        "senderProfileName" : {
+          "type" : "string"
+        },
+        "senderLoginName" : {
+          "type" : "string"
+        },
+        "recipientProfileName" : {
+          "type" : "string"
+        },
+        "recipientLoginName" : {
+          "type" : "string"
+        },
+        "recipients" : {
+          "type" : "string"
+        },
+        "url" : {
+          "type" : "string"
+        }
+      }
+    },
+    "PayerProfile" : {
+      "allOf" : [ {
+        "$ref" : "#/definitions/CommonTypeActor"
+      } ],
+      "type" : "object",
+      "required" : [ "participantType" ],
+      "properties" : {
+        "participantType" : {
+          "type" : "string",
+          "enum" : [ "APPLICANT", "PROVIDER" ]
+        }
+      }
+    },
+    "PaymentData" : {
+      "type" : "object",
+      "required" : [ "amount", "referenceDate", "expirationDate" ],
+      "properties" : {
+        "aisPaymentId" : {
+          "type" : "string"
+        },
+        "currency" : {
+          "type" : "string"
+        },
+        "amount" : {
+          "description" : "сума на задължението (десетичен разделител \".\", до 2 симвоlа след десетичния разделител, пр. \"2.33\")",
+          "type" : "string"
+        },
+        "typeCode" : {
+          "type" : "string"
+        },
+        "referenceNumber" : {
+          "type" : "string"
+        },
+        "referenceType" : {
+          "type" : "string"
+        },
+        "referenceDate" : {
+          "description" : "дата на документ (референтен документ за плащане)",
+          "type" : "string",
+          "format" : "date-time"
+        },
+        "expirationDate" : {
+          "description" : "дата на изтичане на заявката за плащане",
+          "type" : "string",
+          "format" : "date-time"
+        },
+        "additionalInformation" : {
+          "type" : "string"
+        },
+        "administrativeServiceUri" : {
+          "type" : "string"
+        },
+        "administrativeServiceSupplierUri" : {
+          "type" : "string"
+        },
+        "administrativeServiceNotificationURL" : {
+          "type" : "string"
+        },
+        "reason" : {
+          "type" : "string"
+        }
+      }
+    },
+    "PaymentModel" : {
+      "description" : "",
+      "allOf" : [ {
+        "$ref" : "#/definitions/PaymentData"
+      } ],
+      "required" : [ "paymentStatus", "providerName" ],
+      "type" : "object",
+      "properties" : {
+        "paymentStatus" : {
+          "description" : "Статус на плащането",
+          "type" : "string"
+        },
+        "providerName" : {
+          "description" : "Име на получателя на плащането",
+          "type" : "string"
+        }
+      },
+      "example" : {
+        "amount" : "2.56",
+        "referenceDate" : "2020-05-27T07:05:57.947Z",
+        "expirationDate" : "2020-07-29T07:05:57.947Z",
+        "paymentStatus" : "PENDING",
+        "providerName" : "ДАЕУ"
+      }
+    },
+    "SendMessageRequest" : {
+      "type" : "object",
+      "properties" : {
+        "actors" : {
+          "type" : "array",
+          "items" : {
+            "$ref" : "#/definitions/CorrespondantProfile"
+          }
+        },
+        "qData" : {
+          "$ref" : "#/definitions/MessageData"
+        }
+      }
+    },
+    "SendMessageResponse" : {
+      "type" : "object",
+      "properties" : {
+        "messageId" : {
+          "type" : "string"
+        }
+      }
+    },
+    "SendMessageInReplyToRequest" : {
+      "type" : "object",
+      "properties" : {
+        "actor" : {
+          "$ref" : "#/definitions/CorrespondantProfile"
+        },
+        "qData" : {
+          "$ref" : "#/definitions/MessageData"
+        },
+        "replyToMessageId" : {
+          "type" : "string"
+        }
+      }
+    },
+    "ReceivedMessageContentResponse" : {
+      "type" : "object",
+      "properties" : {
+        "messageId" : {
+          "type" : "string"
+        },
+        "senderLoginElectronicSubjectId" : {
+          "type" : "string"
+        },
+        "senderLoginElectronicSubjectName" : {
+          "type" : "string"
+        },
+        "senderLoginElectronicSubjectEmail" : {
+          "type" : "string"
+        },
+        "message" : {
+          "$ref" : "#/definitions/MessageData"
+        }
+      }
+    },
+    "MessagesBoxResponse" : {
+      "type" : "object",
+      "properties" : {
+        "messageType" : {
+          "$ref" : "#/definitions/MessageDirectionType"
+        },
+        "messages" : {
+          "type" : "array",
+          "items" : {
+            "$ref" : "#/definitions/MessageBoxModel"
+          }
+        },
+        "count" : {
+          "type" : "string"
+        }
+      }
+    },
+    "RegisteredInstitutionsResponse" : {
+      "allOf" : [ {
+        "$ref" : "#/definitions/CommonTypeActor"
+      } ],
+      "type" : "object",
+      "required" : [ "electronicId" ],
+      "properties" : {
+        "electronicId" : {
+          "type" : "string"
+        },
+        "isActive" : {
+          "type" : "boolean",
+          "default" : false
+        }
+      }
+    },
+    "ReceivedMessagesResponse" : {
+      "$ref" : "#/definitions/MessagesListModel"
+    },
+    "SubjectInfoResponse" : {
+      "allOf" : [ {
+        "$ref" : "#/definitions/CommonTypeActor"
+      } ],
+      "type" : "object",
+      "required" : [ "electronicId" ],
+      "properties" : {
+        "electronicId" : {
+          "type" : "string"
+        },
+        "isActive" : {
+          "type" : "boolean",
+          "default" : false
+        }
+      }
+    },
+    "PersonRegistrationInfoResponse" : {
+      "type" : "object",
+      "required" : [ "uid" ],
+      "properties" : {
+        "uid" : {
+          "$ref" : "#/definitions/CommonTypeUID"
+        },
+        "name" : {
+          "type" : "string",
+          "default" : false
+        },
+        "isActive" : {
+          "type" : "boolean",
+          "default" : false
+        },
+        "registrationProfile" : {
+          "type" : "array",
+          "items" : {
+            "$ref" : "#/definitions/CommonTypeUID"
+          }
+        }
+      }
+    },
+    "SendMessageStatusResponse" : {
+      "$ref" : "#/definitions/MessageModel"
+    }
+  }
+}

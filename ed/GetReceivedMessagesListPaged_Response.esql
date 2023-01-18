@@ -1,0 +1,46 @@
+BROKER SCHEMA ed
+
+
+CREATE COMPUTE MODULE GetReceivedMessagesListPaged_Response
+	
+DECLARE ns NAMESPACE 'https://edelivery.egov.bg/services/integration';
+DECLARE ns2 NAMESPACE 'http://schemas.datacontract.org/2004/07/EDelivery.Common.DataContracts';
+	
+	CREATE FUNCTION Main() RETURNS BOOLEAN
+	BEGIN
+		DECLARE i INTEGER 1;
+	
+
+		CREATE FIELD OutputRoot.JSON.Data.messages IDENTITY(JSON.Array)messages;
+		SET OutputRoot.JSON.Data.count = InputRoot.SOAP.Body.ns:GetReceivedMessagesListPagedResponse.ns:GetReceivedMessagesListPagedResult.ns2:AllItemsCount;
+	
+		FOR source AS InputRoot.SOAP.Body.ns:GetReceivedMessagesListPagedResponse.ns:GetReceivedMessagesListPagedResult.ns2:Items.ns2:DcMessage[] DO
+
+		
+			SET OutputRoot.JSON.Data.messages.item[i].messageId=source.ns2:Id;
+			SET OutputRoot.JSON.Data.messages.item[i].title=source.ns2:Title;
+			SET OutputRoot.JSON.Data.messages.item[i].isDraft=source.ns2:IsDraft;	
+			
+			SET OutputRoot.JSON.Data.messages.item[i].dateCreated=source.ns2:DateCreated;
+			
+			IF LENGTH(source.ns2:DateSent)>0 THEN
+				SET OutputRoot.JSON.Data.messages.item[i].dateSent=source.ns2:DateSent;
+				SET OutputRoot.JSON.Data.messages.item[i].senderLoginElectronicSubjectId=source.ns2:SenderLogin.ns2:ElectronicSubjectId;
+    	 		SET OutputRoot.JSON.Data.messages.item[i].senderLoginElectronicSubjectName=source.ns2:SenderLogin.ns2:ElectronicSubjectName;
+     			SET OutputRoot.JSON.Data.messages.item[i].senderProfileElectronicSubjectId=source.ns2:SenderProfile.ns2:ElectronicSubjectId;
+     			SET OutputRoot.JSON.Data.messages.item[i].senderProfileElectronicSubjectName=source.ns2:SenderProfile.ns2:ElectronicSubjectName;
+			END IF;
+			IF LENGTH(source.ns2:DateReceived)>0 THEN
+     			SET OutputRoot.JSON.Data.messages.item[i].dateReceived=source.ns2:DateReceived;
+    			SET OutputRoot.JSON.Data.messages.item[i].receiverLoginElectronicSubjectId=source.ns2:ReceiverLogin.ns2:ElectronicSubjectId;
+    			SET OutputRoot.JSON.Data.messages.item[i].receiverLoginElectronicSubjectName=source.ns2:ReceiverLogin.ns2:ElectronicSubjectName;
+    			SET OutputRoot.JSON.Data.messages.item[i].receiverProfileElectronicSubjectId=source.ns2:ReceiverProfile.ns2:ElectronicSubjectId;
+    			SET OutputRoot.JSON.Data.messages.item[i].receiverProfileElectronicSubjectName=source.ns2:ReceiverProfile.ns2:ElectronicSubjectName;
+			END IF;
+    		SET i = i + 1;
+	END FOR;
+	RETURN TRUE;
+	END;
+
+
+END MODULE;

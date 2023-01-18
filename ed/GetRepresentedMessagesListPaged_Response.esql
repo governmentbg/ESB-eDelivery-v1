@@ -1,0 +1,121 @@
+BROKER SCHEMA ed
+
+
+
+CREATE COMPUTE MODULE GetRepresentedMessagesListPaged_Response
+	CREATE FUNCTION Main() RETURNS BOOLEAN
+	BEGIN
+
+		DECLARE i INTEGER 1;
+	
+
+		CREATE FIELD OutputRoot.JSON.Data.messages IDENTITY(JSON.Array)messages;
+		SET OutputRoot.JSON.Data.messageType= InputLocalEnvironment.Variables.messageType;
+		
+		SET OutputRoot.JSON.Data.count = InputRoot.JSON.Data.length;
+	
+		FOR source AS InputRoot.JSON.Data.result.*[] DO
+
+
+			SET OutputRoot.JSON.Data.messages.item[i].messageId=source.messageId;
+			SET OutputRoot.JSON.Data.messages.item[i].subject=source.subject;
+				
+			IF LENGTH(source.dateSent)>0 THEN SET OutputRoot.JSON.Data.messages.item[i].dateSent=source.dateSent; END IF;
+			IF LENGTH(source.dateReceived)>0 THEN SET OutputRoot.JSON.Data.messages.item[i].dateReceived=source.dateReceived; END IF;
+			IF LENGTH(source.senderProfileName)>0 THEN SET OutputRoot.JSON.Data.messages.item[i].senderProfileName=source.senderProfileName; END IF;
+			IF LENGTH(source.senderLoginName)>0 THEN SET OutputRoot.JSON.Data.messages.item[i].senderLoginName=source.senderLoginName; END IF;
+			IF LENGTH(source.recipientProfileName)>0 THEN SET OutputRoot.JSON.Data.messages.item[i].recipientProfileName=source.recipientProfileName; END IF;	
+			IF LENGTH(source.recipientLoginName)>0 THEN SET OutputRoot.JSON.Data.messages.item[i].recipientLoginName=source.recipientLoginName; END IF;
+			IF LENGTH(source.recipients)>0 THEN SET OutputRoot.JSON.Data.messages.item[i].recipients=source.recipients; END IF;
+			
+			SET OutputRoot.JSON.Data.messages.item[i].url=source.url;
+
+    		SET i = i + 1;
+	END FOR;
+	
+	RETURN TRUE;
+
+	END;
+	
+  
+
+END MODULE;
+
+	/*
+		{
+  "result": [
+    {
+      "messageId": 0,
+      "dateSent": "2021-12-03T13:49:45.785Z",
+      "subject": "string",
+      "senderProfileName": "string",
+      "senderLoginName": "string",
+      "recipients": "string",
+      "url": "string"
+    }
+  ],
+  "length": 0
+  {
+  "result": [
+    {
+      "messageId": 0,
+      "dateSent": "2021-12-03T13:50:48.591Z",
+      "dateReceived": "2021-12-03T13:50:48.591Z",
+      "subject": "string",
+      "senderProfileName": "string",
+      "senderLoginName": "string",
+      "recipientProfileName": "string",
+      "recipientLoginName": "string",
+      "url": "string"
+    }
+  ],
+  "length": 0
+}
+*/
+/*
+	SET OutputRoot.JSON.Data.requestedType = InputRoot.JSON.Data.requestedType  ; -- 'RECEIVED_NEW'; -- SENТ, RECEIVED, RECEIVED_NEW
+	SET OutputRoot=InputRoot;
+
+	SET OutputRoot.JSON.Data.requestedType = InputLocalEnvironment.REST.Input.Parameters.direction; -- 'RECEIVED_NEW'; -- SEND, RECEIVED, RECEIVED_NEW
+	CREATE FIELD OutputRoot.JSON.Data.accessibleProfiles  IDENTITY(JSON.Array)accessibleProfiles; 
+	SET i = 1;
+		SET OutputRoot.JSON.Data.accessibleProfiles.item[i].profile.type = 'Person';
+		SET OutputRoot.JSON.Data.accessibleProfiles.item[i].profile.name = 'Име на лицето 1';
+		SET OutputRoot.JSON.Data.accessibleProfiles.item[i].profile.uid.type = 'EGN';
+		SET OutputRoot.JSON.Data.accessibleProfiles.item[i].profile.uid.value = '1234567890';
+		SET OutputRoot.JSON.Data.accessibleProfiles.item[i].profile.info.contacts.phone='0563839202';
+		SET OutputRoot.JSON.Data.accessibleProfiles.item[i].profile.info.contacts.mail='mail@abv.bg';		
+		
+			SET OutputRoot.JSON.Data.accessibleProfiles.item[i].count = 2;
+			
+		CREATE FIELD OutputRoot.JSON.Data.accessibleProfiles.item[i].messages IDENTITY(JSON.Array)messages; 
+			
+			SET j=1;
+			SET OutputRoot.JSON.Data.accessibleProfiles.item[i].messages.item[j].senderLoginElectronicSubjectId='00000000-0000-0000-0000-000000000001';
+     		SET OutputRoot.JSON.Data.accessibleProfiles.item[i].messages.item[j].senderLoginElectronicSubjectName='senderLoginElectronicSubjectName';
+     		SET OutputRoot.JSON.Data.accessibleProfiles.item[i].messages.item[j].senderProfileElectronicSubjectId='00000000-0000-0000-0000-000000000002';
+     		SET OutputRoot.JSON.Data.accessibleProfiles.item[i].messages.item[j].senderProfileElectronicSubjectName='senderProfileElectronicSubjectName';
+    		SET OutputRoot.JSON.Data.accessibleProfiles.item[i].messages.item[j].receiverLoginElectronicSubjectId='00000000-0000-0000-0000-000000000003';
+    		SET OutputRoot.JSON.Data.accessibleProfiles.item[i].messages.item[j].receiverLoginElectronicSubjectName='receiverLoginElectronicSubjectName';
+    		SET OutputRoot.JSON.Data.accessibleProfiles.item[i].messages.item[j].receiverProfileElectronicSubjectId='00000000-0000-0000-0000-000000000004';
+    		SET OutputRoot.JSON.Data.accessibleProfiles.item[i].messages.item[j].receiverProfileElectronicSubjectName='receiverProfileElectronicSubjectName';
+   		  	SET OutputRoot.JSON.Data.accessibleProfiles.item[i].messages.item[j].id=1;
+     		SET OutputRoot.JSON.Data.accessibleProfiles.item[i].messages.item[j].title='message_title';
+     		SET OutputRoot.JSON.Data.accessibleProfiles.item[i].messages.item[j].dateSent= CURRENT_GMTTIMESTAMP;
+     		SET OutputRoot.JSON.Data.accessibleProfiles.item[i].messages.item[j].dateReceived= CURRENT_GMTTIMESTAMP;
+			  
+			SET j=2;
+			SET OutputRoot.JSON.Data.accessibleProfiles.item[i].messages.item[j].senderLoginElectronicSubjectId='00000000-0000-0000-0000-000000000005';
+     		SET OutputRoot.JSON.Data.accessibleProfiles.item[i].messages.item[j].senderLoginElectronicSubjectName='senderLoginElectronicSubjectName';
+     		SET OutputRoot.JSON.Data.accessibleProfiles.item[i].messages.item[j].senderProfileElectronicSubjectId='00000000-0000-0000-0000-000000000006';
+     		SET OutputRoot.JSON.Data.accessibleProfiles.item[i].messages.item[j].senderProfileElectronicSubjectName='senderProfileElectronicSubjectName';
+    		SET OutputRoot.JSON.Data.accessibleProfiles.item[i].messages.item[j].receiverLoginElectronicSubjectId='00000000-0000-0000-0000-000000000007';
+    		SET OutputRoot.JSON.Data.accessibleProfiles.item[i].messages.item[j].receiverLoginElectronicSubjectName='receiverLoginElectronicSubjectName';
+    		SET OutputRoot.JSON.Data.accessibleProfiles.item[i].messages.item[j].receiverProfileElectronicSubjectId='00000000-0000-0000-0000-000000000008';
+    		SET OutputRoot.JSON.Data.accessibleProfiles.item[i].messages.item[j].receiverProfileElectronicSubjectName='receiverProfileElectronicSubjectName';
+   		  	SET OutputRoot.JSON.Data.accessibleProfiles.item[i].messages.item[j].id='messageId-1';
+     		SET OutputRoot.JSON.Data.accessibleProfiles.item[i].messages.item[j].title='message_title';
+     		SET OutputRoot.JSON.Data.accessibleProfiles.item[i].messages.item[j].dateSent= CURRENT_GMTTIMESTAMP;
+     		SET OutputRoot.JSON.Data.accessibleProfiles.item[i].messages.item[j].dateReceived= CURRENT_GMTTIMESTAMP;
+
+		*/

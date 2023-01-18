@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<ns2:restapiDescriptor xmlns="http://com.ibm.etools.mft.descriptor.base" xmlns:ns2="http://com.ibm.etools.mft.descriptor.restapi" definitionType="swagger_20" definitionFile="swagger.json" implementation="gen/DAEU_eDelivery.msgflow" https="true">
+    <references/>
+    <ns2:operations>
+        <ns2:operation name="getPersonRegistrationInfo" implementation="getPersonRegistrationInfo.subflow"/>
+        <ns2:operation name="getReceivedMessageContent" implementation="getReceivedMessageContent.subflow"/>
+        <ns2:operation name="getReceivedMessagesListPaged" implementation="getReceivedMessagesListPaged.subflow"/>
+        <ns2:operation name="getRegisteredInstitutions" implementation="getRegisteredInstitutions.subflow"/>
+        <ns2:operation name="getRepresentedMessagesListPaged" implementation="getRepresentedMessagesListPaged.subflow"/>
+        <ns2:operation name="getSentMessageStatus" implementation="getSentMessageStatus.subflow"/>
+        <ns2:operation name="getSubjectInfo" implementation="getSubjectInfo.subflow"/>
+        <ns2:operation name="postSendMessage" implementation="postSendMessage.subflow"/>
+        <ns2:operation name="postSendMessageInReplyTo" implementation="postSendMessageInReplyTo.subflow"/>
+    </ns2:operations>
+    <ns2:errorHandlers>
+        <ns2:errorHandler type="CATCH" implementation="DAEU_eDeliveryInputCatchHandler.subflow"/>
+        <ns2:errorHandler type="FAILURE" implementation="DAEU_eDeliveryInputFailureHandler.subflow"/>
+        <ns2:errorHandler type="TIMEOUT" implementation="DAEU_eDeliveryInputTimeoutHandler.subflow"/>
+    </ns2:errorHandlers>
+</ns2:restapiDescriptor>

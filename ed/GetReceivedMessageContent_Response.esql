@@ -1,0 +1,36 @@
+BROKER SCHEMA ed
+
+
+
+CREATE COMPUTE MODULE GetReceivedMessageContent_Response
+	
+DECLARE ns NAMESPACE 'https://edelivery.egov.bg/services/integration';
+DECLARE ns2 NAMESPACE 'http://schemas.datacontract.org/2004/07/EDelivery.Common.DataContracts';
+
+	CREATE FUNCTION Main() RETURNS BOOLEAN
+	BEGIN
+			DECLARE i INTEGER 1;
+		
+			SET OutputRoot.JSON.Data.messageId =    								InputRoot.SOAP.Body.ns:GetReceivedMessageContentResponse.ns:GetReceivedMessageContentResult.ns2:Id;
+			SET OutputRoot.JSON.Data.senderLoginElectronicSubjectId = 				InputRoot.SOAP.Body.ns:GetReceivedMessageContentResponse.ns:GetReceivedMessageContentResult.ns2:SenderLogin.ns2:ElectronicSubjectId;
+			SET OutputRoot.JSON.Data.senderLoginElectronicSubjectName = 			InputRoot.SOAP.Body.ns:GetReceivedMessageContentResponse.ns:GetReceivedMessageContentResult.ns2:SenderLogin.ns2:ElectronicSubjectName;
+			SET OutputRoot.JSON.Data.senderLoginEmail = 							InputRoot.SOAP.Body.ns:GetReceivedMessageContentResponse.ns:GetReceivedMessageContentResult.ns2:SenderLogin.ns2:Email;
+
+			SET OutputRoot.JSON.Data.message.title = 								InputRoot.SOAP.Body.ns:GetReceivedMessageContentResponse.ns:GetReceivedMessageContentResult.ns2:Title;
+			SET OutputRoot.JSON.Data.message.messageText = 							InputRoot.SOAP.Body.ns:GetReceivedMessageContentResponse.ns:GetReceivedMessageContentResult.ns2:MessageText;
+			
+					
+			CREATE FIELD OutputRoot.JSON.Data.message.attachments IDENTITY(JSON.Array)attachments;
+			
+			FOR source AS InputRoot.SOAP.Body.ns:GetReceivedMessageContentResponse.ns:GetReceivedMessageContentResult.ns2:AttachedDocuments.ns2:DcDocument[] DO
+				SET OutputRoot.JSON.Data.message.attachments.Item[i].content = InputRoot.SOAP.Body.ns:GetReceivedMessageContentResponse.ns:GetReceivedMessageContentResult.ns2:AttachedDocuments.ns2:DcDocument[i].ns2:Content;
+	  			SET i=i+1;
+			END FOR;
+		
+		
+	RETURN TRUE;
+		 
+		
+	END;
+
+END MODULE;

@@ -1,0 +1,30 @@
+BROKER SCHEMA ed
+
+
+CREATE COMPUTE MODULE CheckPersonHasRegistration_Request
+	
+DECLARE ns NAMESPACE 'https://edelivery.egov.bg/services/integration';
+DECLARE ns2 NAMESPACE 'http://schemas.datacontract.org/2004/07/EDelivery.Common.DataContracts';
+DECLARE xsi NAMESPACE  'http://www.w3.org/2001/XMLSchema-instance';
+DECLARE eDeliveryAddressURL EXTERNAL CHARACTER '';
+
+	CREATE FUNCTION Main() RETURNS BOOLEAN
+	BEGIN
+	DECLARE i INTEGER 1;
+
+		CALL SetLocalEvironmentVariables();
+		
+		SET OutputRoot.XMLNSC.ns:CheckPersonHasRegistration.ns:personId = InputLocalEnvironment.REST.Input.Parameters.personUID;
+			
+
+		RETURN TRUE;
+	END;
+	 
+	CREATE PROCEDURE SetLocalEvironmentVariables() BEGIN
+  		
+		SET OutputLocalEnvironment.Destination.SOAP.Request.Transport.HTTP.WebServiceURL = eDeliveryAddressURL;
+  		SET OutputLocalEnvironment.Destination.SOAP.Request.Operation = 'CheckPersonHasRegistration';
+  		SET OutputLocalEnvironment.Variables.systemOID =  InputLocalEnvironment.Variables.systemOID;
+   		SET OutputLocalEnvironment.Destination.RouterList.DestinationData[1].labelName = InputLocalEnvironment.Variables.systemLABEL ||'-'||OutputLocalEnvironment.Destination.SOAP.Request.Operation;
+END;
+END MODULE;

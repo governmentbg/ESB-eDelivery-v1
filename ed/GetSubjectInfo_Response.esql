@@ -1,0 +1,88 @@
+BROKER SCHEMA ed
+
+
+CREATE COMPUTE MODULE GetSubjectInfo_Response
+	
+DECLARE ns NAMESPACE 'https://edelivery.egov.bg/services/integration';
+DECLARE ns2 NAMESPACE 'http://schemas.datacontract.org/2004/07/EDelivery.Common.DataContracts.ESubject';
+
+	CREATE FUNCTION Main() RETURNS BOOLEAN
+	BEGIN
+			DECLARE i INTEGER 1;
+		
+			SET OutputRoot.JSON.Data.subjectInfo.electronicId =						InputRoot.SOAP.Body.ns:GetSubjectInfoResponse.ns:GetSubjectInfoResult.ns2:ElectronicSubjectId;
+			
+			SET OutputRoot.JSON.Data.subjectInfo.type = 							InputRoot.SOAP.Body.ns:GetSubjectInfoResponse.ns:GetSubjectInfoResult.ns2:ProfileType;
+	--		SET OutputRoot.JSON.Data.subjectInfo.uid.type = 						InputRoot.SOAP.Body.ns:GetSubjectInfoResponse.ns:GetSubjectInfoResult.ns2:ProfileType;
+			SET OutputRoot.JSON.Data.subjectInfo.uid.value = 						InputRoot.SOAP.Body.ns:GetSubjectInfoResponse.ns:GetSubjectInfoResult.ns2:UniqueSubjectIdentifier;
+			SET OutputRoot.JSON.Data.subjectInfo.name = 							InputRoot.SOAP.Body.ns:GetSubjectInfoResponse.ns:GetSubjectInfoResult.ns2:ElectronicSubjectName;
+			SET OutputRoot.JSON.Data.subjectInfo.info.contacts.email = 				InputRoot.SOAP.Body.ns:GetSubjectInfoResponse.ns:GetSubjectInfoResult.ns2:Email;
+			SET OutputRoot.JSON.Data.subjectInfo.info.contacts.phone = 				InputRoot.SOAP.Body.ns:GetSubjectInfoResponse.ns:GetSubjectInfoResult.ns2:PhoneNumber;
+			SET OutputRoot.JSON.Data.subjectInfo.info.contacts.address.country = 	InputRoot.SOAP.Body.ns:GetSubjectInfoResponse.ns:GetSubjectInfoResult.ns2:Address.ns2:CountryIso2;
+			SET OutputRoot.JSON.Data.subjectInfo.info.contacts.address.state = 		InputRoot.SOAP.Body.ns:GetSubjectInfoResponse.ns:GetSubjectInfoResult.ns2:Address.ns2:State;
+			SET OutputRoot.JSON.Data.subjectInfo.info.contacts.address.city = 		InputRoot.SOAP.Body.ns:GetSubjectInfoResponse.ns:GetSubjectInfoResult.ns2:Address.ns2:City;
+			SET OutputRoot.JSON.Data.subjectInfo.info.contacts.address.zip = 		InputRoot.SOAP.Body.ns:GetSubjectInfoResponse.ns:GetSubjectInfoResult.ns2:Address.ns2:ZipCode;
+			SET OutputRoot.JSON.Data.subjectInfo.info.contacts.address.address = 	InputRoot.SOAP.Body.ns:GetSubjectInfoResponse.ns:GetSubjectInfoResult.ns2:Address.ns2:Address;
+   			SET OutputRoot.JSON.Data.subjectInfo.isActive =						InputRoot.SOAP.Body.ns:GetSubjectInfoResponse.ns:GetSubjectInfoResult.ns2:IsActivated;
+
+		
+	    -- 	CASE UPPER(InputRoot.JSON.Data.actors.*[i].role)
+		--		WHEN 'SENDER' THEN
+		--			SET OutputLocalEnvironment.Variables.SenderType = InputRoot.JSON.Data.actors.Item[i].type;
+		--			SET OutputRoot.XMLNSC.ns:SendMessage.ns:senderType = OutputLocalEnvironment.Variables.SenderType;
+		--			SET OutputRoot.XMLNSC.ns:SendMessage.ns:senderUniqueIdentifier = InputRoot.JSON.Data.actors.Item[i].uid.value;
+		--	END CASE;
+			RETURN TRUE;
+		END; 
+END MODULE;
+
+/*
+<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" 
+xmlns:int="https://edelivery.egov.bg/services/integration" 
+xmlns:edel="http://schemas.datacontract.org/2004/07/EDelivery.Common.DataContracts.ESubject" 
+xmlns:arr="http://schemas.microsoft.com/2003/10/Serialization/Arrays">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <int:GetSubjectInfoResponse>
+         <!--Optional:-->
+         <int:GetSubjectInfoResult>
+            <!--Optional:-->
+            <edel:ElectronicSubjectId>?</edel:ElectronicSubjectId>
+            <!--Optional:-->
+            <edel:ElectronicSubjectName>?</edel:ElectronicSubjectName>
+            <!--Optional:-->
+            <edel:Email>?</edel:Email>
+            <!--Optional:-->
+            <edel:IsActivated>?</edel:IsActivated>
+            <!--Optional:-->
+            <edel:PhoneNumber>?</edel:PhoneNumber>
+            <!--Optional:-->
+            <edel:ProfileType>?</edel:ProfileType>
+            <!--Optional:-->
+            <edel:Address>
+               <!--Optional:-->
+               <edel:Address>?</edel:Address>
+               <!--Optional:-->
+               <edel:City>?</edel:City>
+               <!--Optional:-->
+               <edel:CountryIso2>?</edel:CountryIso2>
+               <!--Optional:-->
+               <edel:Id>?</edel:Id>
+               <!--Optional:-->
+               <edel:State>?</edel:State>
+               <!--Optional:-->
+               <edel:ZipCode>?</edel:ZipCode>
+            </edel:Address>
+            <!--Optional:-->
+            <edel:UniqueSubjectIdentifier>?</edel:UniqueSubjectIdentifier>
+            <!--Optional:-->
+            <edel:VerificationInfo>
+               <!--Zero or more repetitions:-->
+               <arr:anyType>?</arr:anyType>
+            </edel:VerificationInfo>
+         </int:GetSubjectInfoResult>
+      </int:GetSubjectInfoResponse>
+   </soapenv:Body>
+</soapenv:Envelope>
+
+*/

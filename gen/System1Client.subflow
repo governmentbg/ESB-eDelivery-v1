@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ecore:EPackage xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:ComIbmSOAPRequest.msgnode="ComIbmSOAPRequest.msgnode" xmlns:ComIbmThrow.msgnode="ComIbmThrow.msgnode" xmlns:ComIbmTrace.msgnode="ComIbmTrace.msgnode" xmlns:ecore="http://www.eclipse.org/emf/2002/Ecore" xmlns:eflow="http://www.ibm.com/wbi/2005/eflow" xmlns:utility="http://www.ibm.com/wbi/2005/eflow_utility" nsURI="gen/System1Client.subflow" nsPrefix="gen_System1Client.subflow">
+  <eClassifiers xmi:type="eflow:FCMComposite" name="FCMComposite_1" useDefaults="true" udpSupport="true">
+    <eSuperTypes href="http://www.ibm.com/wbi/2005/eflow#//FCMBlock"/>
+    <eStructuralFeatures xmi:type="ecore:EAttribute" xmi:id="Property.webServiceURL" name="webServiceURL" defaultValueLiteral="https://edelivery-test.egov.bg/Services/EDeliveryIntegrationService.svc">
+      <eType xmi:type="ecore:EDataType" href="http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+    </eStructuralFeatures>
+    <eStructuralFeatures xmi:type="ecore:EAttribute" xmi:id="Property.webServiceURL.internal_npcompiler" name="webServiceURL.internal_npcompiler">
+      <eType xmi:type="ecore:EDataType" href="http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+    </eStructuralFeatures>
+    <translation xmi:type="utility:TranslatableString" key="System1Client" bundleName="gen/System1Client" pluginId="DAEU_eDelivery"/>
+    <colorGraphic16 xmi:type="utility:GIFFileGraphic" resourceName="platform:/plugin/DAEU_eDelivery/icons/full/obj16/System1Client.gif"/>
+    <colorGraphic32 xmi:type="utility:GIFFileGraphic" resourceName="platform:/plugin/DAEU_eDelivery/icons/full/obj30/System1Client.gif"/>
+    <composition>
+      <nodes xmi:type="ComIbmThrow.msgnode:FCMComposite_1" xmi:id="FCMComposite_1_3" location="786,30">
+        <translation xmi:type="utility:ConstantString" string="Throw"/>
+      </nodes>
+      <nodes xmi:type="ComIbmSOAPRequest.msgnode:FCMComposite_1" xmi:id="FCMComposite_1_4" location="257,136" wsdlFileName="EDeliveryIntegrationService.wsdl" selectedPortType="IEDeliveryIntegrationService" selectedBinding="BasicHttpBinding_IEDeliveryIntegrationService" selectedOperation="GetReceivedMessageContent" selectedPort="BasicHttpBinding_IEDeliveryIntegrationService" targetNamespace="https://edelivery.egov.bg/services/integration" useHTTPTransport="true" webServiceURL="https://edelivery-test.egov.bg/Services/EDeliveryIntegrationService.svc"
+          sslProtocol="TLSv1.2" securityProfileName="NULL" parserXmlnscBuildTreeUsingXMLSchema="false" validateMaster="none">
+        <translation xmi:type="utility:ConstantString" string="IEDeliveryIntegrationService (SYSTEM1)"/>
+        <nsMappingTable nsPrefix="tns" namespace="https://edelivery.egov.bg/services/integration"/>
+      </nodes>
+      <nodes xmi:type="ComIbmTrace.msgnode:FCMComposite_1" xmi:id="FCMComposite_1_5" location="647,29" filePath="/var/mqsi/common/log/eDeliveryFile.log" pattern="==============================          Error         ================================&#xD;&#xA;${Root}">
+        <translation xmi:type="utility:ConstantString" string="ErrorLog"/>
+      </nodes>
+      <nodes xmi:type="eflow:FCMSink" xmi:id="Output" location="784,145">
+        <translation xmi:type="utility:TranslatableString" key="Output" bundleName="gen/System1Client" pluginId="DAEU_eDelivery"/>
+      </nodes>
+      <nodes xmi:type="eflow:FCMSource" xmi:id="InTerminal.Input" location="70,135">
+        <translation xmi:type="utility:TranslatableString" key="InTerminal.Input" bundleName="gen/System1Client" pluginId="DAEU_eDelivery"/>
+      </nodes>
+      <nodes xmi:type="ComIbmTrace.msgnode:FCMComposite_1" xmi:id="FCMComposite_1_1" location="175,135" destination="file" filePath="/var/mqsi/common/log/eDeliveryFile.log" pattern="---------------------------------------------------------------------------------------------------------------------------&#xD;&#xA;S T A R T   O F   T R A C E ${CURRENT_TIMESTAMP} &#xD;&#xA;MessageFlowLabel:     ${MessageFlowLabel} &#xD;&#xA;NodeLabel:     ${NodeLabel}&#xD;&#xA;-- L O C A L    E N V I R O N M E N T &#xD;&#xA;${LocalEnvironment}      &#xD;&#xA;--  R O O T request   &#xD;&#xA;${Root}&#xD;&#xA;">
+        <translation xmi:type="utility:ConstantString" string="LogMessage"/>
+      </nodes>
+      <nodes xmi:type="ComIbmTrace.msgnode:FCMComposite_1" xmi:id="FCMComposite_1_2" location="632,146" destination="file" filePath="/var/mqsi/common/log/eDeliveryFile.log" pattern="-------------&#xD;&#xA;${ProcessId}  - ${CURRENT_TIMESTAMP}&#xD;&#xA;-------------&#xD;&#xA;R O O T response&#xD;&#xA;${Root}&#xD;&#xA; E N D   O F   T R A C E &#xD;&#xA;---------------------------------------------------------------------------------------------------------------------------">
+        <translation xmi:type="utility:ConstantString" string="LogMessage1"/>
+      </nodes>
+      <connections xmi:type="eflow:FCMConnection" xmi:id="FCMConnection_3" targetNode="FCMComposite_1_5" sourceNode="FCMComposite_1_4" sourceTerminalName="OutTerminal.failure" targetTerminalName="InTerminal.in"/>
+      <connections xmi:type="eflow:FCMConnection" xmi:id="FCMConnection_4" targetNode="FCMComposite_1_3" sourceNode="FCMComposite_1_5" sourceTerminalName="OutTerminal.out" targetTerminalName="InTerminal.in"/>
+      <connections xmi:type="eflow:FCMConnection" xmi:id="FCMConnection_1" targetNode="FCMComposite_1_1" sourceNode="InTerminal.Input" sourceTerminalName="OutTerminal.out" targetTerminalName="InTerminal.in"/>
+      <connections xmi:type="eflow:FCMConnection" xmi:id="FCMConnection_5" targetNode="FCMComposite_1_4" sourceNode="FCMComposite_1_1" sourceTerminalName="OutTerminal.out" targetTerminalName="InTerminal.in"/>
+      <connections xmi:type="eflow:FCMConnection" xmi:id="FCMConnection_6" targetNode="FCMComposite_1_2" sourceNode="FCMComposite_1_4" sourceTerminalName="OutTerminal.fault" targetTerminalName="InTerminal.in"/>
+      <connections xmi:type="eflow:FCMConnection" xmi:id="FCMConnection_7" targetNode="FCMComposite_1_2" sourceNode="FCMComposite_1_4" sourceTerminalName="OutTerminal.out" targetTerminalName="InTerminal.in"/>
+      <connections xmi:type="eflow:FCMConnection" xmi:id="FCMConnection_8" targetNode="Output" sourceNode="FCMComposite_1_2" sourceTerminalName="OutTerminal.out" targetTerminalName="InTerminal.in"/>
+    </composition>
+    <propertyOrganizer>
+      <propertyDescriptor groupName="Group.Basic" propertyEditor="com.ibm.etools.mft.ibmnodes.editors.soap.http.SOAP_Over_HTTP_WebServicesURLPropertyEditor" compiler="com.ibm.etools.mft.ibmnodes.compilers.GenericSOAPCompiler" configurable="true" describedAttribute="Property.webServiceURL">
+        <propertyName xmi:type="utility:TranslatableString" key="Property.webServiceURL" bundleName="ComIbmSOAPRequest" pluginId="com.ibm.etools.mft.ibmnodes.definitions"/>
+        <propertyDescriptor groupName="Group.InternalRuntimeGroup" readOnly="true" hidden="true" userDefined="true" describedAttribute="Property.webServiceURL.internal_npcompiler">
+          <propertyName xmi:type="utility:TranslatableString" key="Property.webServiceURL.internal_npcompiler" bundleName="gen/System1Client" pluginId="DAEU_eDelivery"/>
+        </propertyDescriptor>
+      </propertyDescriptor>
+    </propertyOrganizer>
+    <attributeLinks promotedAttribute="Property.webServiceURL" overriddenNodes="FCMComposite_1_4">
+      <overriddenAttribute href="ComIbmSOAPRequest.msgnode#Property.webServiceURL"/>
+    </attributeLinks>
+    <stickyBoard/>
+  </eClassifiers>
+</ecore:EPackage>

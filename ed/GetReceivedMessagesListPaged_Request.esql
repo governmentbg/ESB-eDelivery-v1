@@ -1,0 +1,39 @@
+BROKER SCHEMA ed
+
+		
+CREATE COMPUTE MODULE GetReceivedMessagesListPaged_Request
+	
+	DECLARE ns NAMESPACE 'https://edelivery.egov.bg/services/integration';
+	DECLARE xsi NAMESPACE  'http://www.w3.org/2001/XMLSchema-instance';
+	DECLARE env NAMESPACE 'http://www.w3.org/2003/05/soap-envelope';
+	DECLARE eDeliveryAddressURL EXTERNAL CHARACTER '';
+
+	CREATE FUNCTION Main() RETURNS BOOLEAN
+	BEGIN
+		
+		CALL SetLocalEvironmentVariables();
+		
+		SET OutputRoot.XMLNSC.ns:GetReceivedMessagesListPaged.ns:operatorEGN = InputLocalEnvironment.Variables.operatorID;
+				
+		SET OutputRoot.XMLNSC.ns:GetReceivedMessagesListPaged.ns:onlyNew = InputLocalEnvironment.REST.Input.Parameters.onlyNew;
+		SET OutputRoot.XMLNSC.ns:GetReceivedMessagesListPaged.ns:pageNumber = InputLocalEnvironment.REST.Input.Parameters.pageNumber;
+		
+		
+		
+		IF InputLocalEnvironment.REST.Input.Parameters.pageSize IS NULL THEN
+			SET OutputRoot.XMLNSC.ns:GetReceivedMessagesListPaged.ns:pageSize = 20;
+		ELSE
+			SET OutputRoot.XMLNSC.ns:GetReceivedMessagesListPaged.ns:pageSize = InputLocalEnvironment.REST.Input.Parameters.pageSize;
+		END IF;
+	
+		RETURN TRUE;
+	END;
+	
+	CREATE PROCEDURE SetLocalEvironmentVariables() BEGIN
+ 		SET OutputLocalEnvironment.Destination.SOAP.Request.Transport.HTTP.WebServiceURL = eDeliveryAddressURL;
+  		SET OutputLocalEnvironment.Destination.SOAP.Request.Operation = 'GetReceivedMessagesListPaged';
+  		SET OutputLocalEnvironment.Variables.systemOID =  InputLocalEnvironment.Variables.systemOID;
+   		SET OutputLocalEnvironment.Destination.RouterList.DestinationData[1].labelName = InputLocalEnvironment.Variables.systemLABEL ||'-'||OutputLocalEnvironment.Destination.SOAP.Request.Operation;
+
+	END;
+END MODULE;

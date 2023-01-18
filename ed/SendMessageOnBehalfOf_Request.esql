@@ -1,0 +1,92 @@
+BROKER SCHEMA ed
+
+CREATE COMPUTE MODULE SendMessageOnBehalfOf_Request
+	
+DECLARE ns NAMESPACE 'https://edelivery.egov.bg/services/integration';
+DECLARE ns2 NAMESPACE 'http://schemas.datacontract.org/2004/07/EDelivery.Common.DataContracts';
+DECLARE xsi NAMESPACE  'http://www.w3.org/2001/XMLSchema-instance';
+DECLARE eDeliveryAddressURL EXTERNAL CHARACTER '';
+
+	CREATE FUNCTION Main() RETURNS BOOLEAN
+	BEGIN
+	DECLARE i INTEGER 1;
+	DECLARE senderIndex INTEGER 0;
+	DECLARE operator CHARACTER ''; 
+		CALL SetLocalEvironmentVariables();
+		
+		SET OutputRoot.XMLNSC.ns:SendMessageOnBehalfOf.ns:message.ns2:Title = InputRoot.JSON.Data.messageData.title;
+		SET OutputRoot.XMLNSC.ns:SendMessageOnBehalfOf.ns:message.ns2:MessageText = InputRoot.JSON.Data.messageData.messageText;
+		
+		SET i=1;	
+		FOR source_attachment AS InputRoot.JSON.Data.messageData.attachments.*[] DO
+			SET OutputRoot.XMLNSC.ns:SendMessageOnBehalfOf.ns:message.ns2:AttachedDocuments.ns2:DcDocument[i].ns2:Content = InputRoot.JSON.Data.messageData.attachments.Item[i].content;
+	  		SET i=i+1;
+		END FOR;		
+		
+		SET OutputLocalEnvironment.Variables.SenderType = 'NOSENDER';
+		SET i=1;
+		FOR source AS InputRoot.JSON.Data.actors.*[] DO
+	     	CASE UPPER(InputRoot.JSON.Data.actors.*[i].role)
+	     		WHEN 'SENDER' THEN
+					SET OutputLocalEnvironment.Variables.SenderType = InputRoot.JSON.Data.actors.Item[i].type;
+					SET senderIndex = i;
+			END CASE;
+     		SET i = i + 1;
+		END FOR;
+		
+	--	SET i=1;
+	
+		IF LENGTH(InputLocalEnvironment.Variables.operatorID)>0 THEN
+			SET operator = InputLocalEnvironment.Variables.operatorID;
+		END IF;
+		IF LENGTH(InputLocalEnvironment.Variables.representedPersonID)>0 THEN
+			SET operator = InputLocalEnvironment.Variables.representedPersonID;
+		END IF;
+
+			IF OutputLocalEnvironment.Variables.SenderType='LEGALPERSON' THEN
+				SET OutputRoot.XMLNSC.ns:SendMessageOnBehalfOf.ns:senderType = OutputLocalEnvironment.Variables.SenderType;
+				SET OutputRoot.XMLNSC.ns:SendMessageOnBehalfOf.ns:senderUniqueIdentifier = InputRoot.JSON.Data.actors.Item[senderIndex].uid.value;
+				IF LENGTH(operator)>0 THEN
+					SET OutputRoot.XMLNSC.ns:SendMessageOnBehalfOf.ns:operatorEGN = operator;
+				END IF;
+			ELSE
+	  			SET OutputLocalEnvironment.Variables.SenderType = 'PERSON';
+				SET OutputRoot.XMLNSC.ns:SendMessageOnBehalfOf.ns:senderType = 'PERSON';
+				SET OutputRoot.XMLNSC.ns:SendMessageOnBehalfOf.ns:senderUniqueIdentifier = InputLocalEnvironment.Variables.representedPersonID;
+			END IF;
+	--	END IF;
+	/*	
+		SET i=1;
+		FOR source AS InputRoot.JSON.Data.actors.*[] DO
+	     	CASE UPPER(InputRoot.JSON.Data.actors.*[i].role)
+	  			WHEN 'RECEIVER' THEN
+	    			SET OutputRoot.XMLNSC.ns:SendMessageOnBehalfOf.ns:receiverType = InputRoot.JSON.Data.actors.Item[i].type;
+					SET OutputRoot.XMLNSC.ns:SendMessageOnBehalfOf.ns:receiverUniqueIdentifier = InputRoot.JSON.Data.actors.Item[i].uid.value;
+
+					SET OutputRoot.XMLNSC.ns:SendMessageOnBehalfOf.ns:receiverPhone = InputRoot.JSON.Data.actors.Item[i].info.contacts.phone;
+					SET OutputRoot.XMLNSC.ns:SendMessageOnBehalfOf.ns:receiverEmail = InputRoot.JSON.Data.actors.Item[i].info.contacts.email;
+
+--				WHEN 'SENDER' THEN
+--					SET OutputLocalEnvironment.Variables.SenderType = InputRoot.JSON.Data.actors.Item[i].type;
+--					SET OutputRoot.XMLNSC.ns:SendMessageOnBehalfOf.ns:senderType = OutputLocalEnvironment.Variables.SenderType;
+--					SET OutputRoot.XMLNSC.ns:SendMessageOnBehalfOf.ns:senderUniqueIdentifier = InputRoot.JSON.Data.actors.Item[i].uid.value;
+			END CASE;
+     		SET i = i + 1;
+		END FOR;
+	*/
+  		
+		SET OutputRoot.XMLNSC.ns:SendMessageOnBehalfOf.ns:serviceOID = InputLocalEnvironment.REST.Input.Parameters.serviceOID;
+		
+
+		RETURN TRUE;
+	END;
+	 
+	CREATE PROCEDURE SetLocalEvironmentVariables() BEGIN
+		SET OutputLocalEnvironment.Destination.SOAP.Request.Transport.HTTP.WebServiceURL = eDeliveryAddressURL;
+  		SET OutputLocalEnvironment.Destination.SOAP.Request.Operation = 'SendMessageOnBehalfOf';
+
+  		SET OutputLocalEnvironment.Variables.systemOID =  InputLocalEnvironment.Variables.systemOID;
+   		SET OutputLocalEnvironment.Destination.RouterList.DestinationData[1].labelName = InputLocalEnvironment.Variables.systemLABEL ||'-'||OutputLocalEnvironment.Destination.SOAP.Request.Operation;
+
+	END;
+END MODULE;

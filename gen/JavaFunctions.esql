@@ -1,0 +1,37 @@
+BROKER SCHEMA gen
+
+	CREATE COMPUTE MODULE JavaFunctions
+	
+	DECLARE ns NAMESPACE 'https://edelivery.egov.bg/services/integration';
+	DECLARE xsi NAMESPACE  'http://www.w3.org/2001/XMLSchema-instance';
+	
+	CREATE FUNCTION Main() RETURNS BOOLEAN
+	BEGIN
+		DECLARE result CHAR '';
+		DECLARE oid CHAR '';
+--		CALL CopyLocalEvironmentVariables();
+		
+--		SET OutputLocalEnvironment.Destination.RouterList.DestinationData[1].labelName = OutputLocalEnvironment.Variables.systemOID ||'-GetReceivedMessagesListPaged';
+		
+		SET OutputLocalEnvironment.Destination.RouterList.DestinationData[1].labelName = SUBSTRING(SUBSTRING(InputLocalEnvironment.REST.Input.Parameters."miscinfo" AFTER 'OID:') BEFORE '/')||'-GetReceivedMessagesListPaged';
+		IF OutputLocalEnvironment.Destination.RouterList.DestinationData[1].labelName IS NULL THEN
+			SET OutputLocalEnvironment.Destination.RouterList.DestinationData[1].labelName = SUBSTRING(SUBSTRING(InputRoot.HTTPInputHeader."Dp-Miscinfo" AFTER 'OID:') BEFORE '/')||'-GetReceivedMessagesListPaged';
+		END IF;
+				
+		SET OutputRoot.SOAP.BODY.ns:GetReceivedMessagesListPaged.ns:operatorEGN = InputLocalEnvironment.REST.Input.Parameters.operatorUID;
+		SET OutputRoot.SOAP.BODY.ns:GetReceivedMessagesListPaged.ns:onlyNew = InputLocalEnvironment.REST.Input.Parameters.onlyNew;
+		SET OutputRoot.SOAP.BODY.ns:GetReceivedMessagesListPaged.ns:pageNumber = InputLocalEnvironment.REST.Input.Parameters.pageNumber;
+		SET OutputRoot.SOAP.BODY.ns:GetReceivedMessagesListPaged.ns:pageSize = InputLocalEnvironment.REST.Input.Parameters.pageSize;
+		
+		SET oid = OutputLocalEnvironment.Destination.RouterList.DestinationData[1].labelName;
+--	SET result =  signMessage(OutputRoot,oid);
+		
+		RETURN TRUE;
+	END;
+/*	
+	CREATE FUNCTION signMessage( IN OutputRoot REFERENCE, IN alias CHAR)
+	RETURNS CHAR
+	LANGUAGE JAVA 
+	EXTERNAL NAME "SignSOAPMessage.signMessage";
+	*/
+END MODULE;

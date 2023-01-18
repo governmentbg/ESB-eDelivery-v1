@@ -1,0 +1,100 @@
+BROKER SCHEMA ed
+
+
+
+CREATE COMPUTE MODULE GetRepresentedMessagesListPaged_Request
+	
+	DECLARE eDeliveryRestAPI EXTERNAL CHARACTER '';
+	
+	CREATE FUNCTION Main() RETURNS BOOLEAN
+    BEGIN		
+	
+	DECLARE pagesize INTEGER 20;
+	SET OutputRoot.Properties = InputRoot.Properties;
+	SET OutputRoot.HTTPRequestHeader."Dp-Miscinfo" = InputRoot.HTTPInputHeader."Dp-Miscinfo";
+	--SET OutputRoot.HTTPRequestHeader."Content-Type"='application/json; charset=utf-8';
+	--SET OutputRoot.HTTPRequestHeader."User-Agent" = InputRoot.HTTPInputHeader."User-Agent";
+	--SET OutputRoot.HTTPRequestHeader."Accept" = '*/*';
+	--SET OutputRoot.HTTPRequestHeader."Cache-Control"='no-cache';
+	--SET OutputRoot.HTTPRequestHeader."Accept-Encoding"='gzip, deflate, br';
+	--SET OutputRoot.HTTPRequestHeader."Connection" = 'keep-alive';
+
+
+	--SET OutputRoot.HTTPRequestHeader."Content-Type" = 'application/json; charset=utf-8';
+	SET OutputLocalEnvironment.Variables.messageType = InputLocalEnvironment.REST.Input.Parameters.direction;
+	CASE OutputLocalEnvironment.Variables.messageType
+		WHEN 'SENT' THEN
+			SET OutputLocalEnvironment.Destination.HTTP.RequestURL = eDeliveryRestAPI || '/obo/messages/outbox';
+	--		SET OutputLocalEnvironment.Destination.RouterList.DestinationData[1].labelName = 'MESSAGE_OUTBOX';
+		WHEN 'RECEIVED' THEN
+			SET OutputLocalEnvironment.Destination.HTTP.RequestURL = eDeliveryRestAPI || '/obo/messages/inbox';
+	--		SET OutputLocalEnvironment.Destination.RouterList.DestinationData[1].labelName = 'MESSAGE_INBOX';
+		END CASE;
+/*
+	IF InputLocalEnvironment.REST.Input.Parameters.profileID IS NULL THEN
+		SET OutputLocalEnvironment.Destination.HTTP.QueryString.profileIdentifier =SUBSTRING(SUBSTRING(InputRoot.HTTPInputHeader."Dp-Miscinfo" AFTER 'representedPersonID:') BEFORE '|');
+	ELSE
+		SET OutputLocalEnvironment.Destination.HTTP.QueryString.profileIdentifier = InputLocalEnvironment.REST.Input.Parameters.profileID;
+	END IF;
+*/
+	IF InputLocalEnvironment.REST.Input.Parameters.pageSize IS NULL THEN
+	ELSE
+		SET pagesize = InputLocalEnvironment.REST.Input.Parameters.pageSize;
+	END IF;
+	
+	SET OutputLocalEnvironment.Destination.HTTP.QueryString.offset = (CAST(InputLocalEnvironment.REST.Input.Parameters.pageNumber AS INTEGER) -1)*pagesize; --изместване
+	SET OutputLocalEnvironment.Destination.HTTP.QueryString.limit = pagesize;
+
+	--SET OutputLocalEnvironment.Destination.HTTP.QueryString.limit = InputLocalEnvironment.REST.Input.Parameters.pageSize;
+		
+	
+	--	SET OutputLocalEnvironment = InputLocalEnvironment;
+	--	SET OutputRoot.HTTPRequestHeader."miscinfo"='dn:/C=BG/ST=OID:2.16.100.1.1.22.1.3/CN=test.client.morska|representedPersonID:7005286939|correspondentOID:2222';
+	--	SET OutputLocalEnvironment.REST.Input.Parameters."miscinfo" = InputRoot.HTTPInputHeader."Dp-Miscinfo";
+	--	SET OutputLocalEnvironment.Destination.HTTP.miscinfo = 'dn:/C=BG/ST=OID:2.16.100.1.1.22.1.3/CN=test.client.morska|representedPersonID:7005286939|correspondentOID:2222';
+	--	SET OutputLocalEnvironment.REST.Input.Parameters."miscinfo" = 'dn:/C=BG/ST=OID:2.16.100.1.1.22.1.3/CN=test.client.morska|representedPersonID:7005286939|correspondentOID:2222';
+		-- InputRoot.HTTPInputHeader."Dp-Miscinfo";
+	--	SET OutputLocalEnvironment.REST.Input.Parameters.profileIdentifier = '7005286939';
+		
+		--SET OutputLocalEnvironment.REST.Input.Parameters.offset = InputLocalEnvironment.REST.Input.Parameters.pageNumber;
+		--SET OutputLocalEnvironment.REST.Input.Parameters.limit = InputLocalEnvironment.REST.Input.Parameters.pageSize;	
+		
+		
+--		SET OutputLocalEnvironment.Destination.RouterList.DestinationData[1].labelName = SUBSTRING(SUBSTRING(InputLocalEnvironment.REST.Input.Parameters."miscinfo" AFTER 'OID:') BEFORE '/')||'-SendMessage';
+--		IF OutputLocalEnvironment.Destination.RouterList.DestinationData[1].labelName IS NULL THEN
+--			SET OutputLocalEnvironment.Destination.RouterList.DestinationData[1].labelName = SUBSTRING(SUBSTRING(InputRoot.HTTPInputHeader."Dp-Miscinfo" AFTER 'OID:') BEFORE '/')||'-SendMessage';
+--		END IF;
+				
+--		SET OutputLocalEnvironment.Variables.systemOID = SUBSTRING(SUBSTRING(InputLocalEnvironment.REST.Input.Parameters."miscinfo" AFTER 'OID:') BEFORE '/');		
+--		IF OutputLocalEnvironment.Variables.systemOID IS NULL THEN
+--			SET OutputLocalEnvironment.Variables.systemOID = SUBSTRING(SUBSTRING(InputRoot.HTTPInputHeader."Dp-Miscinfo" AFTER 'OID:') BEFORE '/');
+--		END IF;
+		
+--		SET OutputLocalEnvironment.Variables.representedPersonID = SUBSTRING(SUBSTRING(InputLocalEnvironment.REST.Input.Parameters."miscinfo" AFTER 'representedPersonID:') BEFORE '|');
+--		IF OutputLocalEnvironment.Variables.representedPersonID IS NULL THEN
+--			SET OutputLocalEnvironment.Variables.representedPersonID = SUBSTRING(SUBSTRING(InputRoot.HTTPInputHeader."Dp-Miscinfo" AFTER 'representedPersonID:') BEFORE '|');
+--		END IF;
+		RETURN TRUE;
+    END;
+    
+  CREATE PROCEDURE CopyMessageHeaders() BEGIN
+		DECLARE I INTEGER 1;
+		DECLARE J INTEGER;
+		SET J = CARDINALITY(InputRoot.HTTPInputHeader.*[]);
+		WHILE I <= J DO
+			SET OutputRoot.HTTPRequestHeader.*[I] = InputRoot.HTTPInputHeader.*[I];
+			SET I = I + 1;
+		END WHILE;
+	END;
+
+	CREATE PROCEDURE CopyEntireMessage() BEGIN
+		SET OutputRoot = InputRoot;
+	END;
+	
+    CREATE PROCEDURE CopyLocalEvironmentVariables() BEGIN
+    	SET OutputLocalEnvironment = InputLocalEnvironment;
+    	
+		-- SET OutputLocalEnvironment.Variables.systemOID =  InputLocalEnvironment.Variables.systemOID;
+		-- SET OutputLocalEnvironment.Variables.representedPersonID = InputLocalEnvironment.Variables.representedPersonID;
+	END;
+END MODULE;

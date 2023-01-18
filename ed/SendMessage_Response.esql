@@ -1,0 +1,13 @@
+BROKER SCHEMA ed
+
+
+
+CREATE COMPUTE MODULE SendMessage_Response
+	DECLARE ns NAMESPACE 'https://edelivery.egov.bg/services/integration';
+	CREATE FUNCTION Main() RETURNS BOOLEAN
+	BEGIN
+		SET OutputRoot.JSON.Data.messageId = InputRoot.SOAP.Body.ns:SendMessageResponse.ns:SendMessageResult;
+		RETURN TRUE;
+	END;
+
+END MODULE;

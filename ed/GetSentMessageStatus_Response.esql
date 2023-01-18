@@ -1,0 +1,40 @@
+BROKER SCHEMA ed
+
+
+CREATE COMPUTE MODULE GetSentMessageStatus_Response
+		
+DECLARE ns NAMESPACE 'https://edelivery.egov.bg/services/integration';
+DECLARE ns2 NAMESPACE 'http://schemas.datacontract.org/2004/07/EDelivery.Common.DataContracts';
+
+	
+	CREATE FUNCTION Main() RETURNS BOOLEAN
+	BEGIN
+		DECLARE i INTEGER 1;
+	
+
+			
+			SET OutputRoot.JSON.Data.messageId=InputRoot.SOAP.Body.ns:GetSentMessageStatusResponse.ns:GetSentMessageStatusResult.ns2:Id;
+			SET OutputRoot.JSON.Data.title=InputRoot.SOAP.Body.ns:GetSentMessageStatusResponse.ns:GetSentMessageStatusResult.ns2:Title;
+			SET OutputRoot.JSON.Data.isDraft=InputRoot.SOAP.Body.ns:GetSentMessageStatusResponse.ns:GetSentMessageStatusResult.ns2:IsDraft;	
+			
+			SET OutputRoot.JSON.Data.dateCreated=InputRoot.SOAP.Body.ns:GetSentMessageStatusResponse.ns:GetSentMessageStatusResult.ns2:DateCreated;
+			
+			IF LENGTH(InputRoot.SOAP.Body.ns:GetSentMessageStatusResponse.ns:GetSentMessageStatusResult.ns2:DateSent)>0 THEN
+				SET OutputRoot.JSON.Data.dateSent=InputRoot.SOAP.Body.ns:GetSentMessageStatusResponse.ns:GetSentMessageStatusResult.ns2:DateSent;
+     		   		
+				SET OutputRoot.JSON.Data.senderLoginElectronicSubjectId=InputRoot.SOAP.Body.ns:GetSentMessageStatusResponse.ns:GetSentMessageStatusResult.ns2:SenderLogin.ns2:ElectronicSubjectId;
+     			SET OutputRoot.JSON.Data.senderLoginElectronicSubjectName=InputRoot.SOAP.Body.ns:GetSentMessageStatusResponse.ns:GetSentMessageStatusResult.ns2:SenderLogin.ns2:ElectronicSubjectName;
+     			SET OutputRoot.JSON.Data.senderProfileElectronicSubjectId=InputRoot.SOAP.Body.ns:GetSentMessageStatusResponse.ns:GetSentMessageStatusResult.ns2:SenderProfile.ns2:ElectronicSubjectId;
+     			SET OutputRoot.JSON.Data.senderProfileElectronicSubjectName=InputRoot.SOAP.Body.ns:GetSentMessageStatusResponse.ns:GetSentMessageStatusResult.ns2:SenderProfile.ns2:ElectronicSubjectName;
+			END IF;
+			IF LENGTH(InputRoot.SOAP.Body.ns:GetSentMessageStatusResponse.ns:GetSentMessageStatusResult.ns2:DateReceived)>0 THEN
+     			SET OutputRoot.JSON.Data.dateReceived=InputRoot.SOAP.Body.ns:GetSentMessageStatusResponse.ns:GetSentMessageStatusResult.ns2:DateReceived;
+    			SET OutputRoot.JSON.Data.receiverLoginElectronicSubjectId=InputRoot.SOAP.Body.ns:GetSentMessageStatusResponse.ns:GetSentMessageStatusResult.ns2:ReceiverLogin.ns2:ElectronicSubjectId;
+    			SET OutputRoot.JSON.Data.receiverLoginElectronicSubjectName=InputRoot.SOAP.Body.ns:GetSentMessageStatusResponse.ns:GetSentMessageStatusResult.ns2:ReceiverLogin.ns2:ElectronicSubjectName;
+    			SET OutputRoot.JSON.Data.receiverProfileElectronicSubjectId=InputRoot.SOAP.Body.ns:GetSentMessageStatusResponse.ns:GetSentMessageStatusResult.ns2:ReceiverProfile.ns2:ElectronicSubjectId;
+    			SET OutputRoot.JSON.Data.receiverProfileElectronicSubjectName=InputRoot.SOAP.Body.ns:GetSentMessageStatusResponse.ns:GetSentMessageStatusResult.ns2:ReceiverProfile.ns2:ElectronicSubjectName;
+			END IF;
+	RETURN TRUE;
+	END;
+
+END MODULE;

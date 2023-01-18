@@ -1,0 +1,75 @@
+BROKER SCHEMA ed
+
+
+CREATE COMPUTE MODULE getReceivedMessagesListPaged_Compute
+	CREATE FUNCTION Main() RETURNS BOOLEAN
+	BEGIN
+		
+		CALL CopyMessageHeaders(); 
+	--CALL CopyEntireMessage();
+	
+		DECLARE blobMsg BLOB InputRoot.BLOB.BLOB;
+		DECLARE remove BLOB X'EFBBBF';
+		DECLARE message BLOB REPLACE(InputRoot.BLOB.BLOB, remove, CAST('' AS BLOB));
+		CREATE LASTCHILD OF OutputRoot DOMAIN ('XMLNSC') NAME 'XMLNSC';
+		CREATE LASTCHILD OF OutputRoot.XMLNSC PARSE(message OPTIONS FolderBitStream CCSID 1208 FORMAT 'XMLNSC');
+	--	DECLARE bodyAsChar CHAR CAST(message AS CHAR CCSID 1208);
+		
+	--	SET OutputLocalEnvironment.SOAP.Envelope = bodyAsChar;
+		
+--		SET OutputRoot.HTTPRequestHeader."Content-Type" = 'text/soap-xml';
+--		SET OutputRoot.HTTPRequestHeader."Content-Transfer-Encoding" = 'xml';
+--		SET OutputLocalEnvironment.Destination.SOAP.Request.Transport.HTTP.WebServiceURL = 'https://edelivery-test.egov.bg/Services/EDeliveryIntegrationService.svc';
+--  	SET OutputLocalEnvironment.Destination.SOAP.Request.Operation = 'GetReceivedMessagesListPaged';
+  		
+  	--	SET OutputRoot.HTTPRequestHeader."HTTPVersion" = 'HTTP/1.0'; 
+  	--	SET OutputRoot.HTTPRequestHeader."Content-Type" = 'text/xml;charset=UTF-8';
+  	--	SET OutputRoot.HTTPRequestHeader."Content-Transfer-Encoding" = 'xml'; 
+  	--	SET OutputRoot.HTTPRequestHeader."SOAPAction" = 'GetReceivedMessagesListPaged'; 
+  --		SET OutputRoot.HTTPRequestHeader."Host" = 'edelivery-test.egov.bg'; 
+   	--	SET OutputLocalEnvironment.Destination.HTTP.RequestURL = '/Services/EDeliveryIntegrationService.svc'; 
+  	--	SET OutputLocalEnvironment.Destination.HTTP.Timeout = '20'; 
+  	--	SET OutputLocalEnvironment.Destination.HTTP.RequestLine.HTTPVersion ='HTTP/1.0'; 
+  	--	SET OutputLocalEnvironment.Destination.HTTP.SSLProtocol = 'TLS';
+  		
+		/*
+		CREATE LASTCHILD OF OutputRoot DOMAIN ('SOAP') NAME 'SOAP';
+		
+		DECLARE I INTEGER 1;
+		DECLARE J INTEGER;
+			DECLARE env NAMESPACE 'http://www.w3.org/2003/05/soap-envelope';
+		SET J = CARDINALITY(InputRoot.XMLNSC.*[]);
+	
+		WHILE I < J DO
+			SET OutputRoot.SOAP.Headers.*[I] = InputRoot.XMLNSC.env:Envelope.env:Header.*[I];
+			SET I = I + 1;
+		END WHILE;
+
+SET OutputRoot.SOAP.Body.ns:SW_COMPENSATE.ns:NC_COMPENSATE_HDR.ns:CUSTOMER_CODE = InputRoot.XMLNSC.SW_COMPENSATE.NC_COMPENSATE_HDR.CUSTOMER_CODE;
+      SET OutputRoot.SOAP.Body.ns:SW_COMPENSATE.ns:NC_COMPENSATE_HDR.ns:TICKET_NUMBER = InputRoot.XMLNSC.SW_COMPENSATE.NC_COMPENSATE_HDR.TICKET_NUMBER;
+      SET OutputRoot.SOAP.Body.ns:SW_COMPENSATE.ns:NC_COMPENSATE_HDR.ns:COST_CENTER = InputRoot.XMLNSC.SW_COMPENSATE.NC_COMPENSATE_HDR.COST_CENTER;
+      SET OutputRoot.SOAP.Body.ns:SW_COMPENSATE.ns:NC_COMPENSATE_HDR.ns:NOTE = InputRoot.XMLNSC.SW_COMPENSATE.NC_COMPENSATE_HDR.NOTE;
+      SET OutputRoot.SOAP.Body.ns:SW_COMPENSATE.ns:NC_COMPENSATE_HDR.ns:NC_COMPENSATE_DETAIL.ns:PRODUCT_CODE=InputRoot.XMLNSC.SW_COMPENSATE.NC_COMPENSATE_HDR.NC_COMPENSATE_DETAIL.PRODUCT_CODE;
+      SET OutputRoot.SOAP.Body.ns:SW_COMPENSATE.ns:NC_COMPENSATE_HDR.ns:NC_COMPENSATE_DETAIL.ns:QUANTITY=InputRoot.XMLNSC.SW_COMPENSATE.NC_COMPENSATE_HDR.NC_COMPENSATE_DETAIL.QUANTITY;		
+*/
+--		SET OutputLocalEnvironment.Destination.RouterList.DestinationData[1].labelName = '2.16.100.1.1.292.1.2-GetReceivedMessagesListPaged';
+		
+		RETURN TRUE;
+	END;
+
+	CREATE PROCEDURE CopyMessageHeaders() BEGIN
+		DECLARE I INTEGER 1;
+		DECLARE J INTEGER;
+		SET J = CARDINALITY(InputRoot.*[]);
+		WHILE I < J DO
+			SET OutputRoot.*[I] = InputRoot.*[I];
+			SET I = I + 1;
+		END WHILE;
+	END;
+
+	CREATE PROCEDURE CopyEntireMessage() BEGIN
+		SET OutputRoot = InputRoot;
+	END;
+	
+	
+END MODULE;
